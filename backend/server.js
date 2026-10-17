@@ -1,20 +1,16 @@
-const express = require("express");
-const cors = require("cors");
 require("dotenv").config();
+const app = require("./app");
+const connectDB = require("./config/db");
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
-app.use(express.json());
-
-app.get("/api/health", (req, res) => {
-  res.json({
-    status: "ok",
-    message: "Forma AI API is running",
+connectDB()
+  .then(() => {
+    app.listen(PORT, () =>
+      console.log(`Forma AI API running at http://localhost:${PORT}`)
+    );
+  })
+  .catch((err) => {
+    console.error("Startup failed:", err.message);
+    process.exit(1);
   });
-});
-
-app.listen(PORT, () => {
-  console.log(`Forma AI API running at http://localhost:${PORT}`);
-});
