@@ -4,6 +4,11 @@ const connectDB = require("./config/db");
 
 const PORT = process.env.PORT || 5000;
 
+if (!process.env.JWT_SECRET) {
+  console.error("Startup failed: JWT_SECRET is not set in .env");
+  process.exit(1);
+}
+
 connectDB()
   .then(() => {
     app.listen(PORT, () =>

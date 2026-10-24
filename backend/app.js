@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const authRoutes = require("./routes/authRoutes");
 const formRoutes = require("./routes/formRoutes");
 
 const app = express();
@@ -15,6 +16,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/forms", formRoutes);
 
 app.use((req, res) => {
