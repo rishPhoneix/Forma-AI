@@ -1,4 +1,4 @@
-# Forma AI — Project Overview
+# Forma AI - Project Overview
 
 ## 1. Purpose
 
