@@ -1,6 +1,7 @@
 const FormSchema = require("../models/FormSchema");
 const { buildZod } = require("../utils/buildZod");
 const { resolveVisibility } = require("../utils/showIf");
+const { validateValues } = require("../utils/validateValues");
 const { getModel } = require("./llm");
 
 const TIMEOUT_MS = 45000;
@@ -48,14 +49,12 @@ async function extract({ formId, text, today }) {
       TIMEOUT_MS
     );
   } catch (err) {
-
     console.error("LLM call failed:", err.message);
     throw new ExtractionError(
       "The AI could not read the text right now. Please fill the form manually.",
       502
     );
   }
-
 
   const checked = schema.safeParse(raw);
   if (!checked.success) {
@@ -72,8 +71,14 @@ async function extract({ formId, text, today }) {
     if (value !== null && value !== undefined) extracted[key] = value;
   }
 
-  
-  const { values, visibleIds } = resolveVisibility(form, extracted);
+ 
+  const { values: valid, rejected } = validateValues(form, extracted);
+  if (rejected.length) {
+    console.warn(`Dropped invalid extracted values for: ${rejected.join(", ")}`);
+  }
+
+ 
+  const { values, visibleIds } = resolveVisibility(form, valid);
 
   const missing = [];
   for (const section of form.sections) {
