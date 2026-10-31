@@ -4,11 +4,17 @@ function leafMet(cond, values) {
   switch (operator) {
     case "equals":
       return actual === cond.value;
+    case "notEquals":
+      // A field that has no value yet is "not equal" to anything.
+      return actual !== cond.value;
     case "in":
       return Array.isArray(cond.value) && cond.value.includes(actual);
+    case "gt":
+      return actual != null && actual > cond.value;
+    case "lt":
+      return actual != null && actual < cond.value;
     default:
-      // An operator we do not handle yet. Keep the field visible instead of
-      // silently throwing the person's data away.
+      // Unknown operator: keep the field visible instead of dropping data.
       console.warn(`showIf: unsupported operator "${operator}"`);
       return true;
   }
