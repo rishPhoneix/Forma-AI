@@ -1,65 +1,65 @@
 # Forma AI
 
-**AI-Augmented Dynamic Form Engine**
+**AI-powered dynamic forms and intelligent workflows.**
 
-Forma AI is an AI-assisted dynamic form engine designed to simplify structured data collection through natural-language input. It combines schema-driven form rendering, conditional questions, validation, and AI-assisted extraction while keeping users in control of reviewing and correcting extracted values.
+Forma AI began as an AI-assisted dynamic form engine. Its core purpose remains schema-driven form creation, conditional questions, validation, natural-language extraction through Magic Input, and human review of AI-suggested values. The product direction expands this foundation into a cohesive SaaS workspace for form creation, data collection, analytics, AI assistance, and workflow automation.
 
-## Project Overview
+## Product vision and architecture
 
-Traditional forms require users to interpret questions and enter information field by field. Forma AI aims to reduce this effort by extracting relevant information from natural-language descriptions and mapping it to predefined form fields.
+Start with the [Master Project Blueprint](PROJECT.md). It defines the product vision, original concept, target application architecture, design direction, NOVA assistant, data model, security principles, and roadmap.
 
-The application follows a human-in-the-loop workflow: AI-generated values are suggestions that users should review and correct before submission.
+Detailed documentation:
+- [Product and application architecture](docs/PRODUCT_ARCHITECTURE.md)
+- [Design system: Light, Dark, and System](docs/DESIGN_SYSTEM.md)
+- [NOVA assistant architecture](docs/AI_ASSISTANT.md)
+- [Data model and workspace tenancy](docs/DATA_MODEL.md)
+- [Security, privacy, and operations](docs/SECURITY_AND_OPERATIONS.md)
+- [Roadmap and implementation status](docs/ROADMAP_AND_STATUS.md)
+- [Project overview](docs/PROJECT_OVERVIEW.md)
 
-## Core Features
-
-- JSON-schema-driven dynamic forms
-- Conditional questions and field validation
-- Natural-language extraction through **Magic Input**
-- Mapping extracted values to form fields
-- Human review before submission
-- Draft saving and resuming
-
-These describe the intended project scope. Refer to the current application and API implementation to determine which workflows are fully implemented.
-
-## Technology Stack
+## Current technology foundation
 
 | Layer | Technologies |
 |---|---|
-| Frontend | React, Vite, React Router |
-| Form Management | React Hook Form |
-| Client State | Zustand |
+| Frontend | React 19, Vite, React Router |
+| Form management | React Hook Form |
+| Client state | Zustand |
 | Backend | Node.js, Express |
 | Database | MongoDB Atlas, Mongoose |
-| AI Integration | LangChain.js, configured LLM provider |
 | Validation | Zod |
+| AI | Gemini currently powers NOVA; provider credentials remain server-side |
+| Assistant rendering | React Markdown, remark-gfm |
+| PDF generation | jsPDF, html2canvas |
 
-## Project Structure
+Check the detailed documentation and current source code before assuming a planned module or technology is already implemented.
+
+## Repository structure
 
 ```text
 Forma-AI/
 +-- Front-end/
 |   +-- forma-ai/           React and Vite application
 +-- backend/                Express API, models, routes and services
-+-- docs/                   Project documentation
-+-- README.md               Project overview and setup guide
++-- docs/                   Product and technical documentation
++-- PROJECT.md              Master product blueprint
++-- README.md               Repository entry point
 ```
 
-## Getting Started
+## Getting started
 
 ### Prerequisites
-
 - Node.js and npm
 - Access to the configured MongoDB database
-- Credentials for the configured AI provider, if using AI extraction
+- Credentials for the configured AI provider if using AI functionality
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/rishPhoneix/Forma-AI.git
 cd Forma-AI
 ```
 
-### 2. Configure and Start the Backend
+### 2. Configure and start the backend
 
 ```bash
 cd backend
@@ -67,15 +67,9 @@ npm install
 copy .env.example .env
 ```
 
-For macOS/Linux, use:
+For macOS/Linux, use `cp .env.example .env`.
 
-```bash
-cp .env.example .env
-```
-
-Configure the required environment variables in `backend/.env` using your own credentials.
-
-**Never commit or share your `.env` file.**
+Configure the required environment variables in `backend/.env` with your own credentials. Never commit or share this file.
 
 Start the backend:
 
@@ -91,7 +85,7 @@ npm run seed
 
 Inspect the seed script and database target before rerunning it against data you need to preserve.
 
-### 3. Install and Start the Frontend
+### 3. Install and start the frontend
 
 Open another terminal from the repository root:
 
@@ -101,13 +95,9 @@ npm install
 npm run dev
 ```
 
-Vite will display the local development URL, usually:
+Vite displays the local development URL, usually `http://localhost:5173/`.
 
-```text
-http://localhost:5173/
-```
-
-### 4. Frontend Build and Lint
+### 4. Build and lint
 
 From `Front-end/forma-ai/`:
 
@@ -116,51 +106,31 @@ npm run build
 npm run lint
 ```
 
-## High-Level Architecture
+## Development principles
 
-1. The React frontend requests form definitions and submits user input through the Express API.
-2. The backend validates incoming requests and coordinates application workflows.
-3. MongoDB stores application data and form definitions through Mongoose.
-4. The AI integration is intended to extract structured values from natural-language descriptions.
-5. Extracted values should be validated and presented for user review before submission.
-
-The exact API endpoints and request/response contracts should be taken from the current backend route and controller implementation.
-
-## Security and Reliability
-
-- Keep database credentials, JWT secrets, and AI-provider API keys in backend environment variables.
-- Never commit `.env` files, secrets, or local dependency folders.
-- Validate incoming requests on the server.
-- Validate AI-generated output against the expected form schema.
-- Treat extracted values as untrusted until validated and reviewed.
-- Do not expose internal stack traces or secret values to the browser.
-
-## Development Status
-
-The repository contains a React/Vite frontend and an Express backend. The frontend has been started locally and its dashboard route has been viewed in a browser.
-
-The complete status of each feature, backend integration, automated testing, and deployment should be updated as those areas are verified. The presence of a page or dependency does not by itself mean its end-to-end workflow is complete.
-
-## Documentation
-
-See [`docs/PROJECT_OVERVIEW.md`](docs/PROJECT_OVERVIEW.md) for the project purpose, problem statement, proposed solution, technology stack, architecture, and security principles.
+- Keep the original dynamic form engine and human-review workflow central.
+- Use real persisted data for metrics and activity.
+- Keep AI and database credentials on the backend.
+- Validate requests and model-generated schemas server-side.
+- Require user review before publishing AI-generated forms.
+- Enforce authorization for every private resource.
+- Distinguish implemented features from planned product direction.
+- Test end-to-end workflows before marking them complete.
 
 ## Contributing
 
 1. Create a branch for your change.
 2. Keep changes focused and avoid committing generated files or secrets.
-3. Run the relevant frontend build/lint checks and backend checks.
+3. Run relevant frontend build/lint checks and backend tests.
 4. Review `git diff` before committing.
 5. Use clear commit messages, for example:
 
-```bash
+```text
 feat(frontend): add schema-driven form renderer
 fix(api): validate form submission payload
-docs: update project setup instructions
+docs: update product architecture
 ```
 
 ---
 
-**Forma AI - AI-assisted forms with human review.**
-
-
+**Forma AI — AI-assisted forms with human review, evolving into an intelligent SaaS workspace.**
