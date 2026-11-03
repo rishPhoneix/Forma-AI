@@ -1,53 +1,70 @@
-# Forma AI - Project Overview
+# Forma AI — Project Overview
 
-## 1. Purpose
+## Purpose
 
-Forma AI is an AI-assisted dynamic form engine designed to simplify structured data collection through natural-language input.
+Forma AI is an AI-assisted dynamic form engine evolving into an intelligent SaaS workspace. It simplifies structured data collection through schema-driven forms, conditional questions, validation, natural-language extraction, and AI-assisted workflows while keeping users in control.
 
-## 2. Problem Statement
+## Original problem
 
-Traditional forms require users to manually interpret questions and enter information field by field. This can be repetitive, time-consuming, and error-prone.
+Traditional forms require users to interpret questions and enter information field by field. This can be repetitive, time-consuming, and error-prone.
 
-Forma AI aims to reduce this effort by extracting relevant information from natural-language descriptions and mapping it to predefined form fields.
+## Original solution — preserved
 
-## 3. Proposed Solution
+- JSON-schema-driven dynamic forms.
+- Conditional questions and field validation.
+- Natural-language extraction through Magic Input.
+- Mapping extracted values to predefined form fields.
+- Human review and correction before submission.
+- Draft saving and resuming.
 
-The application combines schema-driven form rendering, conditional logic, server-side validation, and AI-assisted data extraction.
+## Expanded product direction
 
-Users remain in control: AI-generated values must be reviewed and can be corrected before submission.
+The longer-term SaaS product adds:
+- A data-driven dashboard.
+- Form and submission management.
+- Analytics and reporting.
+- Forma Assistant (NOVA).
+- Context-aware AI form assistance and schema generation.
+- Submission insights.
+- Global Light, Dark, and System themes.
+- Settings, notifications, and interactive onboarding.
+- Workspace/team collaboration.
+- Workflow automation and integrations.
+- Usage metering and subscription management.
 
-## 4. Core Scope
+These are roadmap items unless specifically marked as implemented and verified in [the implementation status](ROADMAP_AND_STATUS.md).
 
-- JSON-schema-driven dynamic forms
-- Conditional questions and field validation
-- Natural-language extraction through Magic Input
-- Mapping extracted values to form fields
-- Human review before submission
-- Draft saving and resuming
+## Technology foundation
 
-## 5. Technology Stack
+- Frontend: React and Vite.
+- Form management: React Hook Form.
+- Client state: Zustand.
+- Backend: Node.js and Express.
+- Database: MongoDB Atlas and Mongoose.
+- Validation: Zod.
+- AI: Gemini currently powers the NOVA chat implementation; provider credentials remain on the server.
 
-- Frontend: React and Vite
-- Form management: React Hook Form
-- Client state: Zustand
-- Backend: Node.js and Express.js
-- Database: MongoDB Atlas and Mongoose
-- AI integration: LangChain.js and an LLM provider
-- Validation: Zod
+## High-level architecture
 
-## 6. High-Level Architecture
+The React frontend communicates with the Express API. The backend authenticates and authorizes requests, validates input, coordinates form and AI workflows, and persists application data through MongoDB. AI-generated values and schemas are untrusted until validated and reviewed by the user.
 
-The React frontend communicates with the Express API over HTTP. The backend validates requests, coordinates AI extraction, and manages persistence through MongoDB. The AI integration returns structured field values that users can review before submitting.
+The target architecture is a modular monolith with clear domains for users, workspaces, forms, submissions, analytics, assistant, activity, notifications, onboarding, and future automation/billing.
 
-## 7. Security and Reliability
+## Security principles
 
-- Store credentials in environment variables.
-- Validate requests on the server.
-- Validate AI-generated output against the expected schema.
-- Treat extracted values as untrusted until validated.
-- Keep sensitive information out of source control.
-- Test critical form and extraction workflows.
+- Store credentials in backend environment variables.
+- Validate requests and AI-generated output on the server.
+- Enforce resource and future workspace-level authorization.
+- Keep sensitive information out of source control and unnecessary logs.
+- Minimize data sent to AI providers.
+- Require human review for generated form schemas and consequential actions.
 
-## 8. Current Status
+## Further documentation
 
-The repository and initial documentation have been created. Application implementation, integration, testing, and deployment remain part of the development roadmap.
+- [Master product blueprint](../PROJECT.md)
+- [Product architecture](PRODUCT_ARCHITECTURE.md)
+- [Design system](DESIGN_SYSTEM.md)
+- [NOVA assistant architecture](AI_ASSISTANT.md)
+- [Data model](DATA_MODEL.md)
+- [Security and operations](SECURITY_AND_OPERATIONS.md)
+- [Roadmap and implementation status](ROADMAP_AND_STATUS.md)
