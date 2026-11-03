@@ -19,10 +19,10 @@ function Login() {
 
   const successMessage = location.state?.message;
 
-  function onSubmit(data) {
+  async function onSubmit(data) {
     setLoginError("");
 
-    const result = loginUser(data.email, data.password);
+    const result = await loginUser(data.email, data.password);
 
     if (!result.success) {
       setLoginError(result.message);

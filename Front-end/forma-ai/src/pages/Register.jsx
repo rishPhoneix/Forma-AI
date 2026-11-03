@@ -18,10 +18,10 @@ function Register() {
 
   const password = watch("password");
 
-  function onSubmit(data) {
+  async function onSubmit(data) {
     setServerError("");
 
-    const result = registerUser(data);
+    const result = await registerUser(data);
 
     if (!result.success) {
       setServerError(result.message);
