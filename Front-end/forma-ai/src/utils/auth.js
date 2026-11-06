@@ -1,76 +1,58 @@
-const USERS_KEY = "forma-ai-users";
-const SESSION_KEY = "forma-ai-session";
-
-export function getUsers() {
-  try {
-    return JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-export function registerUser(user) {
-  const users = getUsers();
-  const name = user.name.trim();
-  const email = user.email.trim().toLowerCase();
-
-  const emailExists = users.some(
-    (item) => item.email.toLowerCase() === email
-  );
-
-  if (emailExists) {
-    return {
-      success: false,
-      message: "This email is already registered.",
-    };
-  }
-
-  users.push({
-    name,
-    email,
-    password: user.password,
-  });
-
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-
-  return { success: true };
-}
-
-export function loginUser(email, password) {
-  const users = getUsers();
-
-  const user = users.find(
-    (item) =>
-      item.email === email.trim().toLowerCase() &&
-      item.password === password
-  );
-
-  if (!user) {
-    return {
-      success: false,
-      message: "Invalid email or password.",
-    };
-  }
-
-  localStorage.setItem(
-    SESSION_KEY,
-    JSON.stringify({
-      name: user.name,
-      email: user.email,
-    })
-  );
-
-  return { success: true };
-}
+import {
+  apiFetch,
+  ApiError,
+  getStoredAuth,
+  setStoredAuth,
+  clearStoredAuth,
+} from "./api";
 
 export function getSession() {
+  const stored = getStoredAuth();
+  if (!stored?.token || !stored?.user) return null;
+  return { ...stored.user, token: stored.token };
+}
+
+function toFailure(err) {
+  if (!(err instanceof ApiError)) {
+    return { success: false, message: "Something went wrong. Please try again." };
+  }
+  const first =
+    Array.isArray(err.details) && typeof err.details[0] === "string"
+      ? err.details[0]
+      : null;
+  return {
+    success: false,
+    message: first ? `${err.message}: ${first}` : err.message,
+  };
+}
+
+export async function registerUser({ name, email, password }) {
   try {
-    return JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
-  } catch {
-    return null;
+    await apiFetch("/auth/signup", {
+      method: "POST",
+      auth: false,
+      body: { name, email, password },
+    });
+    return { success: true };
+  } catch (err) {
+    return toFailure(err);
+  }
+}
+
+export async function loginUser(email, password) {
+  try {
+    const data = await apiFetch("/auth/login", {
+      method: "POST",
+      auth: false,
+      body: { email, password },
+    });
+    setStoredAuth({ token: data.token, user: data.user });
+    return { success: true };
+  } catch (err) {
+    return toFailure(err);
   }
 }
 
 export function logoutUser() {
-  localStorage.removeItem(SESSION_KEY);
+  clearStoredAuth();
 }

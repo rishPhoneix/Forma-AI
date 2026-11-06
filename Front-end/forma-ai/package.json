@@ -14,11 +14,13 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.91.0",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.18.4",
+    "remark-gfm": "^4.0.1",
     "zustand": "^5.0.16"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
+    "@babel/core": "7.29.7",
     "@eslint/js": "^10.0.1",
     "@rolldown/plugin-babel": "^0.2.4",
     "@types/react": "^19.3.0",

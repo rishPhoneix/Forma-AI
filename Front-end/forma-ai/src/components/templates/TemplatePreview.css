@@ -1,0 +1,203 @@
+.template-preview {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--glass-border, var(--border));
+  border-radius: 13px;
+  background: var(--surface-glass);
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+.template-preview-empty {
+  display: grid;
+  min-height: 190px;
+  place-items: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.template-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-alt);
+}
+
+.template-preview-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-heading);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.template-preview-brand-mark {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  border-radius: 7px;
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+  font-size: 12px;
+}
+
+.template-preview-version {
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.template-preview-content {
+  padding: 15px;
+}
+
+.template-preview-intro {
+  margin-bottom: 13px;
+}
+
+.template-preview-kicker {
+  color: var(--primary-hover);
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.13em;
+}
+
+.template-preview-intro h4 {
+  margin: 5px 0;
+  color: var(--text-heading);
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+
+.template-preview-intro p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 9px;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.template-preview-progress {
+  height: 4px;
+  margin: 13px 0 16px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--surface-alt);
+}
+
+.template-preview-progress span {
+  display: block;
+  width: 36%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+.template-preview-section {
+  margin-bottom: 13px;
+}
+
+.template-preview-section-title {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--text-heading);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.template-preview-field {
+  margin-bottom: 10px;
+}
+
+.template-preview-field-heading {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 5px;
+  color: var(--text);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.template-preview-required {
+  color: #C88A63;
+}
+
+.template-preview-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 30px;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--text-muted);
+  font-size: 8px;
+}
+
+.template-preview-input.preview-textarea {
+  min-height: 43px;
+  align-items: flex-start;
+}
+
+.template-preview-checkbox {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.template-preview-conditional {
+  display: inline-block;
+  margin-top: 5px;
+  color: var(--secondary);
+  font-size: 8px;
+  font-weight: 650;
+}
+
+.template-preview-more {
+  padding: 8px 0;
+  border-top: 1px dashed var(--border);
+  color: var(--primary-hover);
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.template-preview-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+:root[data-theme="dark"] .template-preview {
+  background: rgba(20, 27, 23, 0.94);
+}
+
+:root[data-theme="dark"] .template-preview-header,
+:root[data-theme="dark"] .template-preview-footer {
+  background: rgba(27, 37, 32, 0.85);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .template-preview {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+}

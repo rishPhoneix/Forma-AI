@@ -1,0 +1,526 @@
+.template-artwork {
+  position: relative;
+  display: flex;
+  min-height: 245px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 19px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(135deg, #F8F3E5 0%, #EEE9D9 55%, #E5E9E1 100%);
+}
+
+.artwork-glow {
+  position: absolute;
+  z-index: -1;
+  top: -65px;
+  right: -45px;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: rgba(232, 201, 107, 0.3);
+  filter: blur(35px);
+}
+
+.artwork-heading,
+.artwork-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.artwork-label {
+  color: #526157;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.artwork-symbol {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border: 1px solid rgba(91, 107, 94, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #526157;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.artwork-insurance,
+.artwork-healthcare,
+.artwork-general {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 150px;
+  place-items: center;
+}
+
+.artwork-document {
+  position: relative;
+  width: min(88%, 320px);
+  padding: 12px 16px 10px;
+  border: 1px solid rgba(85, 99, 86, 0.16);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 28px rgba(50, 62, 49, 0.09);
+  transform: rotate(-2deg);
+}
+
+.artwork-document-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #526157;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+
+.artwork-document-icon {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  border-radius: 6px;
+  background: #E9E5D4;
+  color: #526157;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.artwork-document svg {
+  display: block;
+  width: 100%;
+  height: 84px;
+  margin-top: 4px;
+  overflow: visible;
+}
+
+.artwork-document svg path {
+  fill: #B8C3B7;
+  stroke: #66796A;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.artwork-document svg circle:first-of-type,
+.artwork-document svg circle:nth-of-type(2) {
+  fill: #44574A;
+  stroke: #44574A;
+}
+
+.artwork-document svg circle:nth-of-type(n+3) {
+  fill: #DCE4D9;
+  stroke: #66796A;
+  stroke-width: 2;
+}
+
+.artwork-document-lines {
+  display: flex;
+  gap: 7px;
+}
+
+.artwork-document-lines span {
+  width: 28%;
+  height: 4px;
+  border-radius: 5px;
+  background: #C9D3C8;
+}
+
+.artwork-floating-tag {
+  position: absolute;
+  right: 5%;
+  bottom: 5px;
+  z-index: 2;
+  padding: 7px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  background: #FFFFFF;
+  box-shadow: 0 5px 16px rgba(40, 50, 40, 0.1);
+  color: #46594B;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.artwork-healthcare .artwork-floating-tag {
+  transform: translateY(8px);
+}
+
+.artwork-health-card {
+  width: min(78%, 270px);
+  padding: 15px;
+  border: 1px solid rgba(89, 111, 94, 0.15);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 28px rgba(50, 62, 49, 0.08);
+  transform: translateY(-12px) rotate(1.5deg);
+}
+
+.artwork-health-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border-radius: 12px;
+  background: #E6EEE6;
+}
+
+.artwork-health-icon svg {
+  width: 26px;
+  height: 26px;
+  fill: #647F6A;
+}
+
+.artwork-health-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 13px 0;
+}
+
+.artwork-health-lines span {
+  width: 82%;
+  height: 5px;
+  border-radius: 5px;
+  background: #D2DDD2;
+}
+
+.artwork-health-lines span:nth-child(2) {
+  width: 58%;
+}
+
+.artwork-health-lines span:nth-child(3) {
+  width: 70%;
+}
+
+.artwork-health-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid #E0E8E0;
+  color: #526157;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.artwork-health-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8DAF91;
+}
+
+.artwork-general-sheet {
+  display: flex;
+  width: min(75%, 245px);
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(85, 99, 86, 0.15);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 28px rgba(50, 62, 49, 0.08);
+  transform: rotate(-1deg);
+}
+
+.artwork-general-icon {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border-radius: 7px;
+  background: #E9E5D4;
+  color: #526157;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.artwork-general-line {
+  width: 75%;
+  height: 5px;
+  border-radius: 5px;
+  background: #C8D1C7;
+}
+
+.artwork-general-line.short {
+  width: 45%;
+}
+
+.artwork-general-input {
+  height: 22px;
+  border: 1px solid #D5DED5;
+  border-radius: 5px;
+  background: #FFFFFF;
+}
+
+.artwork-general-action {
+  width: 38%;
+  height: 19px;
+  border-radius: 5px;
+  background: #C9A94F;
+}
+
+.artwork-feedback {
+  background: linear-gradient(135deg, #FBF3D9 0%, #F2EACF 55%, #EAE8D9 100%);
+}
+
+.artwork-feedback .artwork-glow {
+  background: rgba(226, 190, 91, 0.36);
+}
+
+.artwork-feedback .artwork-general-icon {
+  background: #F5E9BD;
+  color: #94762C;
+}
+
+.artwork-feedback .artwork-general-action {
+  width: 43%;
+  background: #C9A94F;
+}
+
+.artwork-feedback .artwork-floating-tag {
+  color: #806725;
+}
+
+.artwork-registration {
+  background: linear-gradient(135deg, #EAF0E7 0%, #E1EADF 55%, #E9E9DD 100%);
+}
+
+.artwork-registration .artwork-glow {
+  background: rgba(131, 166, 128, 0.3);
+}
+
+.artwork-registration .artwork-general-icon {
+  background: #DCE9DA;
+  color: #527657;
+}
+
+.artwork-registration .artwork-general-line {
+  background: #B9CDB9;
+}
+
+.artwork-registration .artwork-general-action {
+  width: 43%;
+  background: #78977B;
+}
+
+.artwork-registration .artwork-floating-tag {
+  color: #496B50;
+}
+
+.artwork-application {
+  background: linear-gradient(135deg, #E9EDE9 0%, #DEE5E0 55%, #E7E8E1 100%);
+}
+
+.artwork-application .artwork-glow {
+  background: rgba(112, 139, 120, 0.28);
+}
+
+.artwork-application .artwork-general-icon {
+  background: #DCE5DF;
+  color: #405B49;
+}
+
+.artwork-application .artwork-general-line {
+  background: #B9C7BD;
+}
+
+.artwork-application .artwork-general-action {
+  width: 43%;
+  background: #607C68;
+}
+
+.artwork-application .artwork-floating-tag {
+  color: #405B49;
+}
+
+.artwork-caption {
+  position: relative;
+  color: #405347;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.artwork-caption-mark {
+  color: #A98734;
+  font-size: 16px;
+}
+
+:root[data-theme="dark"] .template-artwork {
+  background: linear-gradient(135deg, #1D2922 0%, #17221C 55%, #202C24 100%);
+  border-color: #344238;
+}
+
+:root[data-theme="dark"] .artwork-glow {
+  background: rgba(105, 145, 111, 0.23);
+}
+
+:root[data-theme="dark"] .artwork-label,
+:root[data-theme="dark"] .artwork-caption {
+  color: #D0DDD2;
+}
+
+:root[data-theme="dark"] .artwork-symbol {
+  border-color: rgba(166, 190, 171, 0.2);
+  background: rgba(35, 49, 40, 0.9);
+  color: #C0D2C3;
+}
+
+:root[data-theme="dark"] .artwork-document,
+:root[data-theme="dark"] .artwork-health-card,
+:root[data-theme="dark"] .artwork-general-sheet {
+  border-color: rgba(180, 202, 183, 0.2);
+  background: #26352B;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="dark"] .artwork-document-top,
+:root[data-theme="dark"] .artwork-health-bottom,
+:root[data-theme="dark"] .artwork-floating-tag {
+  color: #D0DDD2;
+}
+
+:root[data-theme="dark"] .artwork-document-icon,
+:root[data-theme="dark"] .artwork-general-icon {
+  background: #304235;
+  color: #D0DDD2;
+}
+
+:root[data-theme="dark"] .artwork-document svg path {
+  fill: #526B58;
+  stroke: #B1C7B5;
+}
+
+:root[data-theme="dark"] .artwork-document svg circle:first-of-type,
+:root[data-theme="dark"] .artwork-document svg circle:nth-of-type(2) {
+  fill: #263B2C;
+  stroke: #263B2C;
+}
+
+:root[data-theme="dark"] .artwork-document svg circle:nth-of-type(n+3) {
+  fill: #829B89;
+  stroke: #B1C7B5;
+}
+
+:root[data-theme="dark"] .artwork-document-lines span,
+:root[data-theme="dark"] .artwork-health-lines span,
+:root[data-theme="dark"] .artwork-general-line {
+  background: #526657;
+}
+
+:root[data-theme="dark"] .artwork-health-icon {
+  background: #304235;
+}
+
+:root[data-theme="dark"] .artwork-health-icon svg {
+  fill: #B1C7B5;
+}
+
+:root[data-theme="dark"] .artwork-health-bottom {
+  border-color: #435548;
+}
+
+:root[data-theme="dark"] .artwork-health-dot {
+  background: #A6C5A9;
+}
+
+:root[data-theme="dark"] .artwork-general-input {
+  border-color: #526657;
+  background: #1B2820;
+}
+
+:root[data-theme="dark"] .artwork-general-action {
+  background: #829B89;
+}
+
+:root[data-theme="dark"] .artwork-floating-tag {
+  border-color: #435548;
+  background: #304235;
+}
+
+:root[data-theme="dark"] .artwork-caption-mark {
+  color: #C9B77D;
+}
+
+:root[data-theme="dark"] .artwork-feedback {
+  background: linear-gradient(135deg, #302C20 0%, #29271E 55%, #292D24 100%);
+}
+
+:root[data-theme="dark"] .artwork-feedback .artwork-glow {
+  background: rgba(195, 158, 69, 0.2);
+}
+
+:root[data-theme="dark"] .artwork-feedback .artwork-general-icon {
+  background: #49402A;
+  color: #E0C77D;
+}
+
+:root[data-theme="dark"] .artwork-feedback .artwork-general-action {
+  background: #B99A4D;
+}
+
+:root[data-theme="dark"] .artwork-feedback .artwork-floating-tag {
+  color: #E5D49F;
+}
+
+:root[data-theme="dark"] .artwork-registration {
+  background: linear-gradient(135deg, #1D3025 0%, #1A2921 55%, #202D25 100%);
+}
+
+:root[data-theme="dark"] .artwork-registration .artwork-glow {
+  background: rgba(112, 158, 116, 0.23);
+}
+
+:root[data-theme="dark"] .artwork-registration .artwork-general-icon {
+  background: #304B37;
+  color: #B7D1B8;
+}
+
+:root[data-theme="dark"] .artwork-registration .artwork-general-action {
+  background: #789B7D;
+}
+
+:root[data-theme="dark"] .artwork-registration .artwork-floating-tag {
+  color: #C4D9C6;
+}
+
+:root[data-theme="dark"] .artwork-application {
+  background: linear-gradient(135deg, #222D29 0%, #1C2924 55%, #252E29 100%);
+}
+
+:root[data-theme="dark"] .artwork-application .artwork-glow {
+  background: rgba(112, 145, 126, 0.22);
+}
+
+:root[data-theme="dark"] .artwork-application .artwork-general-icon {
+  background: #35483D;
+  color: #C1D2C6;
+}
+
+:root[data-theme="dark"] .artwork-application .artwork-general-action {
+  background: #779582;
+}
+
+:root[data-theme="dark"] .artwork-application .artwork-floating-tag {
+  color: #C6D6CA;
+}
+
+@media (max-width: 540px) {
+  .template-artwork {
+    min-height: 225px;
+  }
+
+  .artwork-insurance,
+  .artwork-healthcare,
+  .artwork-general {
+    min-height: 140px;
+  }
+}
