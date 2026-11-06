@@ -1,0 +1,1040 @@
+.nova-workspace {
+  min-height: 100vh;
+}
+
+.nova-page {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  min-height: calc(100vh - 80px);
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+.nova-history-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 18px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.nova-history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.nova-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.nova-history-heading h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 24px;
+  font-weight: 750;
+}
+
+.nova-logo,
+.nova-welcome-icon {
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+}
+
+.nova-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  font-size: 22px;
+}
+
+.nova-new-chat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--primary);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nova-new-chat:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.nova-new-chat span {
+  font-size: 18px;
+}
+
+.nova-history-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 18px;
+  padding: 0 12px;
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface-alt);
+  color: var(--muted);
+}
+
+.nova-history-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.nova-history-search input::placeholder {
+  color: var(--muted);
+}
+
+.nova-history-list {
+  flex: 1;
+  min-height: 100px;
+  margin-top: 26px;
+}
+
+.nova-section-label {
+  display: block;
+  margin-bottom: 13px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 1.2px;
+}
+
+.nova-history-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 6px;
+  padding: 4px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.nova-history-item:hover,
+.nova-history-item.selected {
+  border-color: var(--border);
+  background: var(--surface-alt);
+}
+
+.nova-history-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+  padding: 8px 5px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.nova-history-title span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nova-history-title span:first-child {
+  color: var(--muted);
+}
+
+.nova-history-title:disabled,
+.nova-delete-chat:disabled,
+.nova-rename-chat:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nova-rename-chat,
+.nova-delete-chat {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nova-rename-chat {
+  font-size: 15px;
+}
+
+.nova-delete-chat {
+  font-size: 19px;
+}
+
+.nova-rename-chat:hover:not(:disabled) {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.nova-delete-chat:hover:not(:disabled) {
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.nova-rename-form {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  min-width: 0;
+}
+
+.nova-rename-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  padding: 0 9px;
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  outline: none;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.nova-rename-input:focus {
+  box-shadow: 0 0 0 2px var(--primary-soft);
+}
+
+.nova-rename-save,
+.nova-rename-cancel {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nova-rename-save {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+.nova-rename-save:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.nova-rename-cancel {
+  background: var(--surface-alt);
+  color: var(--muted);
+}
+
+.nova-rename-cancel:hover:not(:disabled) {
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.nova-rename-save:disabled,
+.nova-rename-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nova-empty-history {
+  padding: 18px 8px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 12px;
+}
+
+.nova-empty-history span {
+  font-size: 20px;
+}
+
+.nova-empty-history p {
+  margin: 8px 0 0;
+}
+
+.nova-history-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 15px 10px;
+  border-top: 1px solid var(--border);
+}
+
+.nova-footer-icon {
+  color: var(--primary);
+  font-size: 22px;
+}
+
+.nova-history-footer strong {
+  color: var(--text);
+  font-size: 12px;
+}
+
+.nova-history-footer p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.nova-chat-area {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+  background: var(--bg);
+}
+
+.nova-chat-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 30px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.nova-chat-topbar h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.nova-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nova-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.nova-status > span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.nova-close-page {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 23px;
+  line-height: 1;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nova-close-page:hover {
+  border-color: var(--secondary);
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.nova-chat-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 300px;
+  overflow-y: auto;
+}
+
+.nova-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 850px;
+  min-height: 100%;
+  margin: auto;
+  padding: 55px 35px;
+  text-align: center;
+}
+
+.nova-welcome-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--primary-soft);
+  font-size: 34px;
+}
+
+.nova-welcome .nova-eyebrow {
+  margin-bottom: 15px;
+}
+
+.nova-welcome h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(25px, 3vw, 36px);
+  font-weight: 750;
+  letter-spacing: -1px;
+}
+
+.nova-welcome h1 span {
+  color: var(--primary);
+}
+
+.nova-welcome > p {
+  max-width: 620px;
+  margin: 15px 0 35px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.nova-suggestion-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+.nova-suggestion-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 155px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nova-suggestion-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.nova-suggestion-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 15px;
+  border-radius: 9px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 17px;
+}
+
+.nova-suggestion-card strong {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.nova-suggestion-card p {
+  margin: 7px 0 12px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.nova-suggestion-arrow {
+  align-self: flex-end;
+  margin-top: auto;
+  color: var(--primary);
+  font-size: 15px;
+}
+
+.nova-message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.nova-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 85%;
+}
+
+.nova-message.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.nova-message-avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.nova-message-bubble {
+  min-width: 0;
+  padding: 13px 16px;
+  border: 1px solid var(--border);
+  border-radius: 4px 13px 13px;
+  background: var(--surface);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.nova-message.user .nova-message-bubble {
+  border-radius: 13px 4px 13px 13px;
+  background: var(--primary-soft);
+}
+
+.nova-message-bubble > span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.nova-markdown {
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.nova-markdown > :first-child {
+  margin-top: 0;
+}
+
+.nova-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.nova-markdown p {
+  margin: 0 0 12px;
+  white-space: normal;
+}
+
+.nova-markdown h1,
+.nova-markdown h2,
+.nova-markdown h3,
+.nova-markdown h4 {
+  margin: 20px 0 10px;
+  color: var(--text);
+  line-height: 1.4;
+  font-weight: 750;
+}
+
+.nova-markdown h1 {
+  font-size: 21px;
+}
+
+.nova-markdown h2 {
+  font-size: 18px;
+}
+
+.nova-markdown h3 {
+  font-size: 16px;
+}
+
+.nova-markdown h4 {
+  font-size: 14px;
+}
+
+.nova-markdown strong {
+  color: var(--text);
+  font-weight: 750;
+}
+
+.nova-markdown ul,
+.nova-markdown ol {
+  margin: 8px 0 14px;
+  padding-left: 24px;
+}
+
+.nova-markdown li {
+  margin: 5px 0;
+  padding-left: 3px;
+}
+
+.nova-markdown li > p {
+  margin: 0;
+}
+
+.nova-markdown a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.nova-markdown a:hover {
+  opacity: 0.8;
+}
+
+.nova-markdown code {
+  padding: 2px 5px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface-alt);
+  color: var(--primary);
+  font-family: Consolas, monospace;
+  font-size: 12px;
+}
+
+.nova-markdown pre {
+  max-width: 100%;
+  margin: 12px 0;
+  padding: 14px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface-alt);
+}
+
+.nova-markdown pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.65;
+  white-space: pre;
+}
+
+.nova-markdown blockquote {
+  margin: 12px 0;
+  padding: 9px 14px;
+  border-left: 3px solid var(--primary);
+  background: var(--surface-alt);
+  color: var(--muted);
+}
+
+.nova-markdown blockquote p {
+  margin: 0;
+}
+
+.nova-markdown hr {
+  margin: 18px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.nova-markdown table {
+  display: block;
+  width: 100%;
+  margin: 14px 0;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.nova-markdown th,
+.nova-markdown td {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.nova-markdown th {
+  background: var(--surface-alt);
+  color: var(--text);
+  font-weight: 750;
+}
+
+.nova-markdown tr:nth-child(even) {
+  background: var(--surface-alt);
+}
+
+.nova-connection-notice {
+  max-width: 650px;
+  align-self: center;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--muted);
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.nova-message-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: calc(100% - 60px);
+  max-width: 850px;
+  margin: 0 auto 35px;
+  padding: 9px 10px 27px 17px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+.nova-message-form input {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.nova-message-form input::placeholder {
+  color: var(--muted);
+}
+
+.nova-message-form button {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary);
+  color: var(--bg);
+  font-size: 23px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nova-message-form button:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.nova-message-form button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.nova-message-form > p {
+  position: absolute;
+  bottom: 5px;
+  left: 17px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.nova-error-message {
+  margin: 12px 20px 0;
+  padding: 11px 14px;
+  border: 1px solid var(--secondary);
+  border-radius: 9px;
+  background: var(--secondary-soft);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.nova-loading-state {
+  display: grid;
+  min-height: 250px;
+  place-items: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.nova-message-list .nova-loading-state {
+  min-height: auto;
+  padding: 15px;
+}
+
+.nova-delete-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.nova-delete-modal {
+  width: 100%;
+  max-width: 420px;
+  padding: 30px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--text);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: nova-modal-enter 0.2s ease-out;
+}
+
+.nova-delete-icon {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(220, 75, 75, 0.13);
+  color: #ef7777;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.nova-delete-modal h2 {
+  margin: 0 0 12px;
+  color: var(--text);
+  font-size: 21px;
+  font-weight: 750;
+}
+
+.nova-delete-modal p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.nova-delete-modal p strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.nova-delete-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.nova-delete-actions button {
+  flex: 1;
+  min-height: 43px;
+  padding: 10px 14px;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.nova-delete-cancel {
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+.nova-delete-cancel:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.nova-delete-confirm {
+  border: 1px solid #c94747;
+  background: #c94747;
+  color: #fff;
+}
+
+.nova-delete-confirm:hover:not(:disabled) {
+  border-color: #df5555;
+  background: #df5555;
+}
+
+.nova-delete-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@keyframes nova-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 1000px) {
+  .nova-page {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+
+  .nova-suggestion-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nova-suggestion-card {
+    min-height: 110px;
+  }
+}
+
+@media (max-width: 700px) {
+  .nova-page {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .nova-history-panel {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nova-history-list {
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  .nova-history-footer {
+    display: none;
+  }
+
+  .nova-chat-topbar {
+    padding: 17px;
+  }
+
+  .nova-chat-topbar h2 {
+    font-size: 17px;
+  }
+
+  .nova-status {
+    display: none;
+  }
+
+  .nova-welcome {
+    padding: 35px 18px;
+  }
+
+  .nova-message-list {
+    padding: 20px 15px;
+  }
+
+  .nova-message {
+    max-width: 95%;
+  }
+
+  .nova-message-form {
+    width: calc(100% - 30px);
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nova-history-panel {
+    padding: 18px 14px;
+  }
+
+  .nova-topbar-actions {
+    gap: 7px;
+  }
+
+  .nova-close-page {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nova-welcome h1 {
+    font-size: 25px;
+  }
+
+  .nova-markdown {
+    font-size: 12px;
+  }
+
+  .nova-markdown pre {
+    padding: 10px;
+  }
+
+  .nova-delete-modal {
+    max-width: 360px;
+    padding: 24px 20px;
+  }
+
+  .nova-delete-actions {
+    flex-direction: column-reverse;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nova-delete-modal {
+    animation: none;
+  }
+
+  .nova-delete-actions button {
+    transition: none;
+  }
+}

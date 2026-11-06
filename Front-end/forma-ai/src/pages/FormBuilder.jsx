@@ -1,9 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import jsPDF from "jspdf";
 import "./FormBuilder.css";
 
 const STORAGE_KEY = "forma-ai-saved-forms";
@@ -11,10 +9,7 @@ const ACTIVITY_KEY = "forma-ai-activity-history";
 
 function logActivity(action, formId, formTitle) {
   try {
-    const activities = JSON.parse(
-      localStorage.getItem(ACTIVITY_KEY) || "[]"
-    );
-
+    const activities = JSON.parse(localStorage.getItem(ACTIVITY_KEY) || "[]");
     activities.unshift({
       id: `${Date.now()}-${Math.random()}`,
       action,
@@ -22,11 +17,7 @@ function logActivity(action, formId, formTitle) {
       formTitle,
       timestamp: new Date().toISOString(),
     });
-
-    localStorage.setItem(
-      ACTIVITY_KEY,
-      JSON.stringify(activities.slice(0, 200))
-    );
+    localStorage.setItem(ACTIVITY_KEY, JSON.stringify(activities.slice(0, 200)));
   } catch (error) {
     console.error("Unable to save activity:", error);
   }
@@ -47,10 +38,7 @@ function FormBuilder() {
     if (!editId) return;
 
     try {
-      const savedForms = JSON.parse(
-        localStorage.getItem(STORAGE_KEY) || "[]"
-      );
-
+      const savedForms = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
       const existingForm = savedForms.find(
         (form) => String(form.id) === String(editId)
       );
@@ -58,15 +46,13 @@ function FormBuilder() {
       if (existingForm) {
         setFormTitle(existingForm.title || "Untitled Form");
         setDescription(existingForm.description || "");
-
         setFields(
           Array.isArray(existingForm.fields)
             ? existingForm.fields.map((field) => ({
                 ...field,
                 options:
                   field.type === "Dropdown"
-                    ? Array.isArray(field.options) &&
-                      field.options.length
+                    ? Array.isArray(field.options) && field.options.length
                       ? field.options
                       : [""]
                     : field.options || [],
@@ -106,22 +92,17 @@ function FormBuilder() {
         field.id === id ? { ...field, [property]: value } : field
       )
     );
-
     setSaveMessage("");
     setSubmitMessage("");
   };
 
   const removeField = (id) => {
-    setFields((previous) =>
-      previous.filter((field) => field.id !== id)
-    );
-
+    setFields((previous) => previous.filter((field) => field.id !== id));
     setSaveMessage("");
     setSubmitMessage("");
   };
 
-  // Download a blank form template as a PDF.
-  const downloadFormPDF = () => {
+  const downloadFormPDF = async () => {
     const cleanTitle = formTitle.trim();
 
     if (!cleanTitle || cleanTitle === "Untitled Form") {
@@ -135,6 +116,7 @@ function FormBuilder() {
     }
 
     try {
+      const { default: jsPDF } = await import("jspdf");
       const doc = new jsPDF("p", "mm", "a4");
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
@@ -152,16 +134,11 @@ function FormBuilder() {
 
       doc.setFillColor(23, 59, 103);
       doc.rect(0, 0, pageWidth, 12, "F");
-
       doc.setFont("helvetica", "bold");
       doc.setFontSize(21);
       doc.setTextColor(23, 59, 103);
 
-      const titleLines = doc.splitTextToSize(
-        cleanTitle,
-        contentWidth
-      );
-
+      const titleLines = doc.splitTextToSize(cleanTitle, contentWidth);
       doc.text(titleLines, margin, y);
       y += titleLines.length * 9 + 3;
 
@@ -187,11 +164,7 @@ function FormBuilder() {
           `${index + 1}. ${field.label?.trim() || "Untitled Field"}` +
           (field.required ? " *" : "");
 
-        const labelLines = doc.splitTextToSize(
-          label,
-          contentWidth
-        );
-
+        const labelLines = doc.splitTextToSize(label, contentWidth);
         const options =
           field.type === "Dropdown"
             ? (field.options || []).filter((option) =>
@@ -207,7 +180,6 @@ function FormBuilder() {
           : [];
 
         const answerLines = field.type === "Textarea" ? 4 : 2;
-
         const blockHeight =
           labelLines.length * 6 +
           optionsText.length * 5 +
@@ -215,12 +187,10 @@ function FormBuilder() {
           12;
 
         addPageIfNeeded(blockHeight);
-
         doc.setFont("helvetica", "bold");
         doc.setFontSize(11);
         doc.setTextColor(30, 41, 59);
         doc.text(labelLines, margin, y);
-
         y += labelLines.length * 6 + 2;
 
         if (optionsText.length) {
@@ -248,7 +218,6 @@ function FormBuilder() {
       });
 
       addPdfFooters(doc, margin);
-
       doc.save(`${makeSafeFilename(cleanTitle)}-blank-form.pdf`);
       setSaveMessage("Blank form PDF downloaded successfully!");
     } catch (error) {
@@ -257,8 +226,8 @@ function FormBuilder() {
     }
   };
 
-  // Download the actual submitted answers as a professional PDF.
-  const downloadSubmittedPDF = (answers) => {
+  const downloadSubmittedPDF = async (answers) => {
+    const { default: jsPDF } = await import("jspdf");
     const doc = new jsPDF("p", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
@@ -274,10 +243,8 @@ function FormBuilder() {
       }
     };
 
-    // Header banner
     doc.setFillColor(23, 59, 103);
     doc.rect(0, 0, pageWidth, 43, "F");
-
     doc.setFont("helvetica", "bold");
     doc.setFontSize(19);
     doc.setTextColor(255, 255, 255);
@@ -288,11 +255,9 @@ function FormBuilder() {
     );
 
     doc.text(titleLines, margin, 18);
-
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.text("COMPLETED FORM SUBMISSION", margin, 33);
-
     y = 53;
 
     if (description.trim()) {
@@ -307,33 +272,17 @@ function FormBuilder() {
 
       const descriptionHeight = descriptionLines.length * 5 + 5;
       addPageIfNeeded(descriptionHeight);
-
       doc.text(descriptionLines, margin, y);
       y += descriptionHeight;
     }
 
     addPageIfNeeded(20);
-
     doc.setFillColor(239, 246, 255);
-    doc.roundedRect(
-      margin,
-      y,
-      contentWidth,
-      13,
-      2,
-      2,
-      "F"
-    );
-
+    doc.roundedRect(margin, y, contentWidth, 13, 2, 2, "F");
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.setTextColor(30, 64, 110);
-    doc.text(
-      `Submitted on: ${new Date().toLocaleString()}`,
-      margin + 4,
-      y + 8
-    );
-
+    doc.text(`Submitted on: ${new Date().toLocaleString()}`, margin + 4, y + 8);
     y += 23;
 
     doc.setFont("helvetica", "bold");
@@ -357,10 +306,8 @@ function FormBuilder() {
       const valueHeight = valueLines.length * 5;
       const cardHeight = labelHeight + valueHeight + 17;
 
-      // If a single answer is very long, split it across pages.
       if (cardHeight > bottomLimit - 20) {
         addPageIfNeeded(20);
-
         doc.setFont("helvetica", "bold");
         doc.setFontSize(10);
         doc.setTextColor(51, 65, 85);
@@ -382,13 +329,8 @@ function FormBuilder() {
             y = 20;
           }
 
-          const chunk = valueLines.slice(
-            start,
-            start + linesPerPage
-          );
-
+          const chunk = valueLines.slice(start, start + linesPerPage);
           addPageIfNeeded(chunk.length * 5 + 8);
-
           doc.setFont("helvetica", "normal");
           doc.setFontSize(10);
           doc.setTextColor(30, 41, 59);
@@ -401,35 +343,22 @@ function FormBuilder() {
       }
 
       addPageIfNeeded(cardHeight);
-
       doc.setFillColor(248, 250, 252);
       doc.setDrawColor(226, 232, 240);
-      doc.roundedRect(
-        margin,
-        y,
-        contentWidth,
-        cardHeight,
-        2,
-        2,
-        "FD"
-      );
-
+      doc.roundedRect(margin, y, contentWidth, cardHeight, 2, 2, "FD");
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(51, 65, 85);
       doc.text(labelLines, margin + 5, y + 7);
 
       const answerY = y + 7 + labelHeight + 3;
-
       doc.setFont("helvetica", "normal");
       doc.setTextColor(30, 41, 59);
       doc.text(valueLines, margin + 5, answerY);
-
       y += cardHeight + 5;
     });
 
     addPdfFooters(doc, margin);
-
     doc.save(
       `${makeSafeFilename(formTitle || "Forma-AI")}-submission.pdf`
     );
@@ -451,9 +380,7 @@ function FormBuilder() {
     const invalidField = fields.find(
       (field) =>
         field.type === "Dropdown" &&
-        !(field.options || []).some((option) =>
-          String(option).trim()
-        )
+        !(field.options || []).some((option) => String(option).trim())
     );
 
     if (invalidField) {
@@ -464,9 +391,7 @@ function FormBuilder() {
     }
 
     try {
-      const savedForms = JSON.parse(
-        localStorage.getItem(STORAGE_KEY) || "[]"
-      );
+      const savedForms = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
       if (!Array.isArray(savedForms)) {
         throw new Error("Saved forms data is invalid.");
@@ -509,9 +434,7 @@ function FormBuilder() {
         action = "Form Edited";
       } else {
         savedForm = {
-          id: `form-${Date.now()}-${Math.random()
-            .toString(36)
-            .slice(2, 8)}`,
+          id: `form-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           title: cleanTitle,
           description: description.trim(),
           fields: cleanedFields,
@@ -525,12 +448,9 @@ function FormBuilder() {
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(savedForms));
       logActivity(action, savedForm.id, savedForm.title);
-
       setFields(cleanedFields);
       setSaveMessage(
-        editId
-          ? "Form updated successfully!"
-          : "Form saved successfully!"
+        editId ? "Form updated successfully!" : "Form saved successfully!"
       );
       setSubmitMessage("");
     } catch (error) {
@@ -539,7 +459,7 @@ function FormBuilder() {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (fields.length === 0) {
@@ -548,32 +468,22 @@ function FormBuilder() {
     }
 
     const formData = new FormData(event.currentTarget);
-
     const submittedAnswers = fields.map((field) => ({
       label: field.label?.trim() || field.type || "Untitled Field",
       type: field.type,
-      value: String(
-        formData.get(`field-${field.id}`) ?? ""
-      ).trim(),
+      value: String(formData.get(`field-${field.id}`) ?? "").trim(),
     }));
 
     try {
-      downloadSubmittedPDF(submittedAnswers);
+      await downloadSubmittedPDF(submittedAnswers);
 
-      const savedForms = JSON.parse(
-        localStorage.getItem(STORAGE_KEY) || "[]"
-      );
-
+      const savedForms = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
       const currentForm = savedForms.find(
         (form) => String(form.id) === String(editId)
       );
 
       if (currentForm) {
-        logActivity(
-          "Preview Submitted",
-          currentForm.id,
-          currentForm.title
-        );
+        logActivity("Preview Submitted", currentForm.id, currentForm.title);
       }
 
       setSubmitMessage(
@@ -582,9 +492,7 @@ function FormBuilder() {
       setSaveMessage("");
     } catch (error) {
       console.error("Unable to process submission:", error);
-      setSubmitMessage(
-        "Unable to generate the PDF. Please try again."
-      );
+      setSubmitMessage("Unable to generate the PDF. Please try again.");
     }
   };
 
@@ -599,16 +507,12 @@ function FormBuilder() {
     switch (field.type) {
       case "Email":
         return <input type="email" {...commonProps} />;
-
       case "Number":
         return <input type="number" {...commonProps} />;
-
       case "Date":
         return <input type="date" {...commonProps} />;
-
       case "Textarea":
         return <textarea {...commonProps} rows={4} />;
-
       case "Dropdown":
         return (
           <select {...commonProps} defaultValue="">
@@ -616,16 +520,12 @@ function FormBuilder() {
             {(field.options || [])
               .filter((option) => String(option).trim() !== "")
               .map((option, index) => (
-                <option
-                  key={`${option}-${index}`}
-                  value={option}
-                >
+                <option key={`${option}-${index}`} value={option}>
                   {option}
                 </option>
               ))}
           </select>
         );
-
       default:
         return <input type="text" {...commonProps} />;
     }
@@ -634,10 +534,8 @@ function FormBuilder() {
   return (
     <div className="builder-layout">
       <Sidebar />
-
       <main className="builder-main">
         <Header />
-
         <section className="builder-content">
           <div className="builder-heading">
             <div>
@@ -646,8 +544,7 @@ function FormBuilder() {
                 {editId ? "Edit Saved Form" : "Dynamic Form Builder"}
               </h1>
               <p>
-                Create, customize, preview, and download professional
-                forms.
+                Create, customize, preview, and download professional forms.
               </p>
             </div>
           </div>
@@ -655,7 +552,6 @@ function FormBuilder() {
           <div className="builder-grid">
             <section className="builder-panel">
               <h2>Form Settings</h2>
-
               <label className="builder-label">
                 Form Title
                 <input
@@ -706,9 +602,7 @@ function FormBuilder() {
                 ))}
               </div>
 
-              <h2 className="added-fields-heading">
-                Customize Fields
-              </h2>
+              <h2 className="added-fields-heading">Customize Fields</h2>
 
               {fields.length === 0 ? (
                 <p className="empty-fields">
@@ -721,7 +615,6 @@ function FormBuilder() {
                       <strong>
                         {index + 1}. {field.type}
                       </strong>
-
                       <button
                         type="button"
                         className="remove-field"
@@ -736,11 +629,7 @@ function FormBuilder() {
                       <input
                         value={field.label || ""}
                         onChange={(event) =>
-                          updateField(
-                            field.id,
-                            "label",
-                            event.target.value
-                          )
+                          updateField(field.id, "label", event.target.value)
                         }
                         placeholder="Example: Department"
                       />
@@ -784,10 +673,8 @@ function FormBuilder() {
                                   const updatedOptions = [
                                     ...(field.options || [""]),
                                   ];
-
                                   updatedOptions[optionIndex] =
                                     event.target.value;
-
                                   updateField(
                                     field.id,
                                     "options",
@@ -795,17 +682,13 @@ function FormBuilder() {
                                   );
                                 }}
                               />
-
                               <button
                                 type="button"
                                 className="remove-field"
                                 onClick={() => {
                                   const updatedOptions = (
                                     field.options || [""]
-                                  ).filter(
-                                    (_, i) => i !== optionIndex
-                                  );
-
+                                  ).filter((_, i) => i !== optionIndex);
                                   updateField(
                                     field.id,
                                     "options",
@@ -883,7 +766,6 @@ function FormBuilder() {
                   <span className="preview-status">LIVE PREVIEW</span>
                   <h2>{formTitle || "Untitled Form"}</h2>
                 </div>
-
                 <button
                   type="button"
                   className="download-pdf-button"
@@ -906,7 +788,6 @@ function FormBuilder() {
                         <span className="required-star"> *</span>
                       )}
                     </label>
-
                     {renderField(field)}
                   </div>
                 ))}
@@ -960,13 +841,7 @@ function addPdfFooters(doc, margin) {
   for (let page = 1; page <= totalPages; page++) {
     doc.setPage(page);
     doc.setDrawColor(226, 232, 240);
-    doc.line(
-      margin,
-      pageHeight - 13,
-      pageWidth - margin,
-      pageHeight - 13
-    );
-
+    doc.line(margin, pageHeight - 13, pageWidth - margin, pageHeight - 13);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);

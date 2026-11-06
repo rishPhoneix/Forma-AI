@@ -1,18 +1,42 @@
-
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import { ApiError } from "../utils/api";
+import { fetchForm } from "../utils/formsApi";
 import "./Responses.css";
 
 const RESPONSES_KEY = "forma-ai-form-responses";
 const FORMS_KEY = "forma-ai-saved-forms";
+
+function humanize(value) {
+  const text = String(value).replace(/_/g, " ").trim();
+  return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+}
 
 function formatValue(value) {
   if (value === null || value === undefined || value === "") return "—";
   if (Array.isArray(value)) return value.join(", ");
   if (typeof value === "object") return JSON.stringify(value);
   return String(value);
+}
+
+// Backend form -> flat list of fields (same order the renderer uses).
+function flattenServerForm(data) {
+  const fields = [];
+
+  (Array.isArray(data?.sections) ? data.sections : []).forEach((section) => {
+    (Array.isArray(section.fields) ? section.fields : []).forEach((field) => {
+      fields.push(field);
+    });
+  });
+
+  return {
+    id: data.formId,
+    title: data.title,
+    source: "server",
+    fields,
+  };
 }
 
 function getAnswerEntries(answers, form) {
@@ -39,9 +63,18 @@ function getAnswerEntries(answers, form) {
           String(item.id ?? index) === fieldId
       );
 
+      // Backend dropdown values are stored raw (e.g. "side_panel").
+      const shown =
+        form?.source === "server" &&
+        field?.type === "dropdown" &&
+        value !== "" &&
+        value != null
+          ? humanize(value)
+          : value;
+
       return {
         label: field?.label || key,
-        value: formatValue(value),
+        value: formatValue(shown),
       };
     });
   }
@@ -54,6 +87,9 @@ function Responses() {
   const [responses, setResponses] = useState([]);
   const [formTitles, setFormTitles] = useState({});
   const [forms, setForms] = useState([]);
+  // formId -> flattened form | "missing" | "error"
+  const [serverForms, setServerForms] = useState({});
+  const requestedIds = useRef(new Set());
 
   useEffect(() => {
     function loadResponses() {
@@ -94,6 +130,43 @@ function Responses() {
     };
   }, []);
 
+  // Fetch backend forms for responses that don't belong to a local form.
+  useEffect(() => {
+    const localIds = new Set(forms.map((form) => String(form.id)));
+
+    const wanted = [
+      ...new Set(
+        responses
+          .map((response) => response.formId ?? response.form?.id)
+          .filter((id) => id !== undefined && id !== null)
+          .map(String)
+          .filter((id) => !localIds.has(id))
+      ),
+    ].filter((id) => !requestedIds.current.has(id));
+
+    wanted.forEach((formId) => {
+      requestedIds.current.add(formId);
+
+      fetchForm(formId)
+        .then((data) => {
+          setServerForms((previous) => ({
+            ...previous,
+            [formId]: flattenServerForm(data),
+          }));
+        })
+        .catch((error) => {
+          console.error("Unable to load form for response:", error);
+          setServerForms((previous) => ({
+            ...previous,
+            [formId]:
+              error instanceof ApiError && error.status === 404
+                ? "missing"
+                : "error",
+          }));
+        });
+    });
+  }, [responses, forms]);
+
   return (
     <div className="dashboard-layout">
       <Sidebar />
@@ -128,15 +201,24 @@ function Responses() {
             {responses.map((response, index) => {
               const formId = response.formId ?? response.form?.id;
 
-              const form = forms.find(
+              const localForm = forms.find(
                 (item) => String(item.id) === String(formId)
               );
+
+              const serverEntry = serverForms[String(formId)];
+              const serverForm =
+                serverEntry && typeof serverEntry === "object"
+                  ? serverEntry
+                  : null;
+
+              const form = localForm || serverForm;
 
               const formTitle =
                 response.formTitle ||
                 response.form?.title ||
                 response.title ||
                 formTitles[String(formId)] ||
+                serverForm?.title ||
                 "Untitled Form";
 
               const submittedAt =
@@ -151,6 +233,10 @@ function Responses() {
               );
 
               const responseId = response.id;
+
+              const editQuery = localForm
+                ? `?response=${encodeURIComponent(responseId)}`
+                : `?source=server&response=${encodeURIComponent(responseId)}`;
 
               return (
                 <article
@@ -195,7 +281,7 @@ function Responses() {
                       className="response-edit-button"
                       onClick={() =>
                         navigate(
-                          `/fill-form/${encodeURIComponent(form.id)}?response=${encodeURIComponent(responseId)}`
+                          `/fill-form/${encodeURIComponent(form.id)}${editQuery}`
                         )
                       }
                     >
@@ -203,7 +289,20 @@ function Responses() {
                     </button>
                   )}
 
-                  {!form && (
+                  {!form && serverEntry === undefined && (
+                    <p className="response-no-answers">
+                      Loading form details...
+                    </p>
+                  )}
+
+                  {!form && serverEntry === "error" && (
+                    <p className="response-no-answers">
+                      Couldn't load this form from the server. Check that the
+                      backend is running.
+                    </p>
+                  )}
+
+                  {!form && serverEntry === "missing" && (
                     <p className="response-no-answers">
                       This form is no longer available to edit.
                     </p>

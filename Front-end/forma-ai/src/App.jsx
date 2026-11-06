@@ -1,116 +1,138 @@
-
+import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import FormBuilder from "./pages/FormBuilder";
-import FormRenderer from "./pages/FormRenderer";
-import Responses from "./pages/Responses";
-import ActivityHistory from "./pages/ActivityHistory";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
-
 import { getSession } from "./utils/auth";
+
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const MyForms = lazy(() => import("./pages/MyForms"));
+const FormBuilder = lazy(() => import("./pages/FormBuilder"));
+const FormRenderer = lazy(() => import("./pages/FormRenderer"));
+const Responses = lazy(() => import("./pages/Responses"));
+const ActivityHistory = lazy(() => import("./pages/ActivityHistory"));
+const Assistant = lazy(() => import("./pages/Assistant"));
+const Templates = lazy(() => import("./pages/Templates"));
 
 function App() {
   const isLoggedIn = Boolean(getSession());
 
   return (
-    <Routes>
-      {/* Default Route */}
-      <Route
-        path="/"
-        element={
-          <Navigate
-            to={isLoggedIn ? "/dashboard" : "/login"}
-            replace
-          />
-        }
-      />
+    <Suspense fallback={<div role="status">Loading page...</div>}>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to={isLoggedIn ? "/dashboard" : "/login"}
+              replace
+            />
+          }
+        />
 
-      {/* Register Page */}
-      <Route
-        path="/register"
-        element={
-          <PublicRoute>
-            <Register />
-          </PublicRoute>
-        }
-      />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
 
-      {/* Login Page */}
-      <Route
-        path="/login"
-        element={
-          <PublicRoute>
-            <Login />
-          </PublicRoute>
-        }
-      />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
 
-      {/* Dashboard */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Create or Edit Form */}
-      <Route
-        path="/create-form"
-        element={
-          <ProtectedRoute>
-            <FormBuilder />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/my-forms"
+          element={
+            <ProtectedRoute>
+              <MyForms />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Fill and Submit Form */}
-      <Route
-        path="/fill-form/:id"
-        element={
-          <ProtectedRoute>
-            <FormRenderer />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/create-form"
+          element={
+            <ProtectedRoute>
+              <FormBuilder />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Submitted Responses */}
-      <Route
-        path="/responses"
-        element={
-          <ProtectedRoute>
-            <Responses />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/fill-form/:id"
+          element={
+            <ProtectedRoute>
+              <FormRenderer />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Activity History */}
-      <Route
-        path="/activity-history"
-        element={
-          <ProtectedRoute>
-            <ActivityHistory />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/templates"
+          element={
+            <ProtectedRoute>
+              <Templates />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Page Not Found */}
-      <Route
-        path="*"
-        element={
-          <Navigate
-            to={isLoggedIn ? "/dashboard" : "/login"}
-            replace
-          />
-        }
-      />
-    </Routes>
+        <Route
+          path="/responses"
+          element={
+            <ProtectedRoute>
+              <Responses />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/activity-history"
+          element={
+            <ProtectedRoute>
+              <ActivityHistory />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/assistant"
+          element={
+            <ProtectedRoute>
+              <Assistant />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to={isLoggedIn ? "/dashboard" : "/login"}
+              replace
+            />
+          }
+        />
+      </Routes>
+    </Suspense>
   );
 }
 
