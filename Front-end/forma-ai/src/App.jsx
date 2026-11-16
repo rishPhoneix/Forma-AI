@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { getSession } from "./utils/auth";
@@ -10,6 +9,7 @@ const Register = lazy(() => import("./pages/Register"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const MyForms = lazy(() => import("./pages/MyForms"));
 const FormBuilder = lazy(() => import("./pages/FormBuilder"));
+const BuildByMagic = lazy(() => import("./pages/BuildByMagic"));
 const FormRenderer = lazy(() => import("./pages/FormRenderer"));
 const Responses = lazy(() => import("./pages/Responses"));
 const ActivityHistory = lazy(() => import("./pages/ActivityHistory"));
@@ -51,6 +51,11 @@ function App() {
         />
 
         <Route
+          path="/fill-form/:id"
+          element={<FormRenderer />}
+        />
+
+        <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
@@ -78,10 +83,10 @@ function App() {
         />
 
         <Route
-          path="/fill-form/:id"
+          path="/build-by-magic"
           element={
             <ProtectedRoute>
-              <FormRenderer />
+              <BuildByMagic />
             </ProtectedRoute>
           }
         />

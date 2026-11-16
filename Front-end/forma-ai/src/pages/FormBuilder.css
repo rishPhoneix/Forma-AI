@@ -8,7 +8,6 @@
   --fb-accent-soft: var(--accent-soft, #e5f0ee);
   --fb-danger: #c45c5c;
   --fb-danger-soft: rgba(196, 92, 92, 0.10);
-
   display: flex;
   width: 100%;
   min-height: 100vh;
@@ -36,8 +35,6 @@
   margin: 0 auto;
   padding: 32px clamp(18px, 3vw, 42px);
 }
-
-
 
 .builder-heading {
   display: flex;
@@ -72,7 +69,6 @@
   line-height: 1.7;
 }
 
-
 .builder-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -104,8 +100,6 @@
   margin-bottom: 22px;
 }
 
-
-
 .builder-label {
   display: flex;
   flex-direction: column;
@@ -136,10 +130,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .builder-label input::placeholder,
@@ -165,7 +156,6 @@
 .preview-field textarea {
   resize: vertical;
 }
-
 
 .field-picker-heading {
   display: flex;
@@ -210,11 +200,7 @@
   line-height: 1.4;
   text-align: center;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .field-type-button {
@@ -233,7 +219,6 @@
   font-size: 18px;
   font-weight: 800;
 }
-
 
 .added-fields-heading {
   margin: 0 0 16px;
@@ -269,8 +254,6 @@
 .field-editor .builder-label {
   margin: 17px 0;
 }
-
-
 
 .remove-field {
   min-height: 34px;
@@ -311,8 +294,6 @@
   line-height: 1.5;
 }
 
-
-
 .required-toggle {
   display: flex;
   align-items: center;
@@ -332,8 +313,6 @@
   cursor: pointer;
 }
 
-
-
 .empty-fields {
   margin: 0;
   padding: 24px 16px;
@@ -345,7 +324,6 @@
   line-height: 1.7;
   text-align: center;
 }
-
 
 .preview-submit {
   width: 100%;
@@ -385,7 +363,6 @@
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
-
 
 .preview-panel {
   position: relative;
@@ -450,7 +427,6 @@
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
-
 
 .preview-field {
   margin: 22px 0;
@@ -526,7 +502,107 @@
   text-align: center;
 }
 
+.forma-phone-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 12px;
+  width: 100%;
+}
 
+.forma-phone-country,
+.forma-phone-number {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.forma-phone-country-label,
+.forma-phone-number > label {
+  color: var(--fb-text);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.forma-phone-country select,
+.forma-phone-number-control input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 12px;
+  border: 1px solid var(--fb-border);
+  border-radius: 10px;
+  outline: none;
+  background: var(--fb-bg);
+  color: var(--fb-text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.forma-phone-country select {
+  cursor: pointer;
+}
+
+.forma-phone-country select:focus,
+.forma-phone-number-control:focus-within {
+  border-color: var(--fb-accent);
+  box-shadow: 0 0 0 3px var(--fb-accent-soft);
+}
+
+.forma-phone-number-control {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--fb-border);
+  border-radius: 10px;
+  background: var(--fb-bg);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.forma-phone-number-control > span {
+  flex-shrink: 0;
+  padding: 12px 10px 12px 13px;
+  border-right: 1px solid var(--fb-border);
+  color: var(--fb-text);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.forma-phone-number-control input {
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.forma-phone-number-control input:focus {
+  border: none;
+  box-shadow: none;
+}
+
+.forma-phone-input input:disabled,
+.forma-phone-country select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.forma-phone-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #c45c5c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.forma-phone-input input[type="hidden"] {
+  display: none;
+}
 
 .builder-layout button:focus-visible {
   outline: 3px solid var(--fb-accent);
@@ -538,8 +614,6 @@
 .builder-layout select:focus-visible {
   outline: none;
 }
-
-
 
 @media (max-width: 1100px) {
   .builder-content {
@@ -555,7 +629,6 @@
     padding: 23px;
   }
 }
-
 
 @media (max-width: 600px) {
   .builder-content {
@@ -617,8 +690,14 @@
   .builder-label textarea,
   .preview-field input,
   .preview-field textarea,
-  .preview-field select {
+  .preview-field select,
+  .forma-phone-country select,
+  .forma-phone-number-control input {
     font-size: 16px;
+  }
+
+  .forma-phone-input {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -638,5 +717,13 @@
 
   .field-editor-top {
     align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forma-phone-country select,
+  .forma-phone-number-control,
+  .forma-phone-number-control input {
+    transition: none;
   }
 }

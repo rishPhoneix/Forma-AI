@@ -4,18 +4,16 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { apiFetch } from "../utils/api";
 import { fetchForms } from "../utils/formsApi";
+import { fetchUserForms, fetchMySubmissions } from "../utils/userFormsApi";
 import "./Dashboard.css";
-
-const STORAGE_KEY = "forma-ai-saved-forms";
-const RESPONSES_KEY = "forma-ai-form-responses";
 
 const ACTIVITY_LABELS = {
   "form.created": { title: "Form created", icon: "+" },
   "form.updated": { title: "Form updated", icon: "↻" },
   "form.published": { title: "Form published", icon: "↗" },
-  "form.unpublished": { title: "Form unpublished", icon: "◌" },
+  "form.unpublished": { title: "Form unpublished", icon: "⊘" },
   "form.deleted": { title: "Form deleted", icon: "×" },
-  "submission.received": { title: "New response received", icon: "↓" },
+  "submission.received": { title: "New response received", icon: "✓" },
 };
 
 function DashboardIcon({ name, size = 20 }) {
@@ -38,9 +36,7 @@ function DashboardIcon({ name, size = 20 }) {
         <path d="M8 8h8M8 12h8M8 16h5" />
       </>
     ),
-    saved: (
-      <path d="M5 3h14a2 2 0 0 1 2 2v16l-9-5-9 5V5a2 2 0 0 1 2-2Z" />
-    ),
+    saved: <path d="M5 3h14a2 2 0 0 1 2 2v16l-9-5-9 5V5a2 2 0 0 1 2-2Z" />,
     fields: (
       <>
         <rect x="3" y="4" width="18" height="16" rx="2" />
@@ -96,7 +92,6 @@ function formatTimestamp(timestamp) {
   if (!timestamp) return null;
 
   const date = new Date(timestamp);
-
   if (Number.isNaN(date.getTime())) return null;
 
   return {
@@ -116,28 +111,49 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
-  const [savedForms, setSavedForms] = useState([]);
+  const [userForms, setUserForms] = useState([]);
   const [responses, setResponses] = useState([]);
-  const [serverForms, setServerForms] = useState([]);
-  const [serverStatus, setServerStatus] = useState("loading");
+  const [templateForms, setTemplateForms] = useState([]);
+  const [formStatus, setFormStatus] = useState("loading");
+  const [responseStatus, setResponseStatus] = useState("loading");
+  const [templateStatus, setTemplateStatus] = useState("loading");
   const [activities, setActivities] = useState([]);
   const [activityStatus, setActivityStatus] = useState("loading");
 
-  const loadLocalData = useCallback(() => {
-    try {
-      const storedForms = JSON.parse(
-        localStorage.getItem(STORAGE_KEY) || "[]"
-      );
-      const storedResponses = JSON.parse(
-        localStorage.getItem(RESPONSES_KEY) || "[]"
-      );
+  const loadUserForms = useCallback(async () => {
+    setFormStatus("loading");
 
-      setSavedForms(Array.isArray(storedForms) ? storedForms : []);
-      setResponses(Array.isArray(storedResponses) ? storedResponses : []);
+    try {
+      const data = await fetchUserForms();
+      const forms = Array.isArray(data) ? data : data?.forms;
+
+      if (!Array.isArray(forms)) {
+        throw new Error("Invalid personal forms data received.");
+      }
+
+      setUserForms(forms);
+      setFormStatus("ready");
     } catch (error) {
-      console.error("Unable to load dashboard data:", error);
-      setSavedForms([]);
-      setResponses([]);
+      console.error("Unable to load personal forms:", error);
+      setFormStatus("error");
+    }
+  }, []);
+
+  const loadResponses = useCallback(async () => {
+    setResponseStatus("loading");
+
+    try {
+      const data = await fetchMySubmissions();
+
+      if (!Array.isArray(data)) {
+        throw new Error("Invalid submission data received.");
+      }
+
+      setResponses(data);
+      setResponseStatus("ready");
+    } catch (error) {
+      console.error("Unable to load submissions:", error);
+      setResponseStatus("error");
     }
   }, []);
 
@@ -159,69 +175,73 @@ function Dashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    loadLocalData();
-    window.addEventListener("storage", loadLocalData);
+  const loadTemplates = useCallback(async () => {
+    setTemplateStatus("loading");
 
-    return () => {
-      window.removeEventListener("storage", loadLocalData);
-    };
-  }, [loadLocalData]);
+    try {
+      const data = await fetchForms();
 
-  useEffect(() => {
-    let cancelled = false;
+      if (!Array.isArray(data)) {
+        throw new Error("Invalid template data received.");
+      }
 
-    fetchForms()
-      .then((data) => {
-        if (cancelled) return;
-
-        setServerForms(Array.isArray(data) ? data : []);
-        setServerStatus("ready");
-      })
-      .catch((error) => {
-        if (cancelled) return;
-
-        console.error("Unable to load server forms:", error);
-        setServerStatus("error");
-      });
-
-    return () => {
-      cancelled = true;
-    };
+      setTemplateForms(data);
+      setTemplateStatus("ready");
+    } catch (error) {
+      console.error("Unable to load server templates:", error);
+      setTemplateStatus("error");
+    }
   }, []);
 
   useEffect(() => {
+    loadUserForms();
+    loadResponses();
+    loadTemplates();
     loadActivities();
-  }, [loadActivities]);
+  }, [loadUserForms, loadResponses, loadTemplates, loadActivities]);
 
-  const userForms = savedForms.map((form) => ({
-    ...form,
-    category: "MY FORM",
-    fields: Array.isArray(form.fields) ? form.fields.length : 0,
-    isSavedForm: true,
-  }));
+  const personalForms = useMemo(
+    () =>
+      userForms.map((form) => ({
+        ...form,
+        id: String(form._id),
+        category: "MY FORM",
+        fields: Array.isArray(form.fields) ? form.fields.length : 0,
+        isCloudForm: true,
+        isSavedForm: true,
+      })),
+    [userForms]
+  );
 
-  const templateForms = serverForms.map((form) => ({
-    id: form.formId,
-    title: form.title,
-    description: form.description || "Ready-made form from the server.",
-    category: "TEMPLATE",
-    fields: null,
-    isSavedForm: false,
-    isServerForm: true,
-  }));
+  const publicTemplates = useMemo(
+    () =>
+      templateForms.map((form) => ({
+        id: form.formId,
+        title: form.title,
+        description: form.description || "Ready-made form from the server.",
+        category: "TEMPLATE",
+        fields: null,
+        isSavedForm: false,
+        isServerForm: true,
+      })),
+    [templateForms]
+  );
 
-  const allForms = [...userForms, ...templateForms];
+  const allForms = [...personalForms, ...publicTemplates];
 
   const filteredForms = allForms.filter((form) =>
     (form.title || "").toLowerCase().includes(search.toLowerCase().trim())
   );
 
-  const totalFields = savedForms.reduce(
+  const totalFields = userForms.reduce(
     (total, form) =>
       total + (Array.isArray(form.fields) ? form.fields.length : 0),
     0
   );
+
+  const publishedForms = userForms.filter(
+    (form) => form.status === "published"
+  ).length;
 
   const responseOverview = useMemo(() => {
     const responseFormIds = new Set();
@@ -236,10 +256,9 @@ function Dashboard() {
 
     const latestResponse = responses.reduce((latest, response) => {
       const timestamp =
-        response.updatedAt ||
         response.submittedAt ||
         response.createdAt ||
-        response.date;
+        response.updatedAt;
 
       if (!timestamp || Number.isNaN(new Date(timestamp).getTime())) {
         return latest;
@@ -267,15 +286,24 @@ function Dashboard() {
   }
 
   function handleEditForm(form) {
-    if (!form.isSavedForm) {
-      alert("Template forms cannot be edited yet.");
+    if (!form.isCloudForm) {
+      alert("This legacy form cannot be edited from the cloud dashboard.");
       return;
     }
 
-    navigate(`/create-form?edit=${encodeURIComponent(form.id)}`);
+    navigate(
+      `/create-form?edit=${encodeURIComponent(form.id)}&source=cloud`
+    );
   }
 
   function handleFillForm(form) {
+    if (form.isCloudForm) {
+      alert(
+        "Cloud form filling will be connected after the Form Renderer update."
+      );
+      return;
+    }
+
     const query = form.isServerForm ? "?source=server" : "";
     navigate(`/fill-form/${encodeURIComponent(form.id)}${query}`);
   }
@@ -313,8 +341,8 @@ function Dashboard() {
             </div>
             <div>
               <p>Total Forms</p>
-              <h3>{allForms.length}</h3>
-              <span>Saved forms and templates</span>
+              <h3>{formStatus === "ready" ? userForms.length : "—"}</h3>
+              <span>Your cloud forms</span>
             </div>
           </article>
 
@@ -323,9 +351,9 @@ function Dashboard() {
               <DashboardIcon name="saved" size={20} />
             </div>
             <div>
-              <p>My Saved Forms</p>
-              <h3>{savedForms.length}</h3>
-              <span>Your created forms</span>
+              <p>Published Forms</p>
+              <h3>{formStatus === "ready" ? publishedForms : "—"}</h3>
+              <span>Forms available to respondents</span>
             </div>
           </article>
 
@@ -335,8 +363,8 @@ function Dashboard() {
             </div>
             <div>
               <p>Total Fields</p>
-              <h3>{totalFields}</h3>
-              <span>Fields in your saved forms</span>
+              <h3>{formStatus === "ready" ? totalFields : "—"}</h3>
+              <span>Fields in your cloud forms</span>
             </div>
           </article>
 
@@ -346,8 +374,8 @@ function Dashboard() {
             </div>
             <div>
               <p>Total Responses</p>
-              <h3>{responses.length}</h3>
-              <span>Submissions stored on this device</span>
+              <h3>{responseStatus === "ready" ? responses.length : "—"}</h3>
+              <span>Submissions stored in the cloud</span>
             </div>
           </article>
         </section>
@@ -372,6 +400,21 @@ function Dashboard() {
               <span className="quick-action-copy">
                 <strong>Create Form</strong>
                 <small>Build a new form</small>
+              </span>
+              <DashboardIcon name="arrow" size={17} />
+            </button>
+
+            <button
+              type="button"
+              className="quick-action-card"
+              onClick={() => navigate("/build-by-magic")}
+            >
+              <span className="quick-action-icon">
+                <DashboardIcon name="sparkle" size={21} />
+              </span>
+              <span className="quick-action-copy">
+                <strong>Build by Magic</strong>
+                <small>Generate a form with AI</small>
               </span>
               <DashboardIcon name="arrow" size={17} />
             </button>
@@ -414,7 +457,9 @@ function Dashboard() {
               <div>
                 <p className="section-eyebrow">FORM MANAGEMENT</p>
                 <h2>My Forms</h2>
-                <p>Manage your forms and open them to collect responses.</p>
+                <p>
+                  Manage your cloud forms and open them to collect responses.
+                </p>
               </div>
 
               <div className="forms-panel-tools">
@@ -441,13 +486,27 @@ function Dashboard() {
               </div>
             </div>
 
-            {serverStatus === "error" && (
+            {formStatus === "error" && (
+              <div className="dashboard-empty-message">
+                <p>Couldn't load your cloud forms.</p>
+                <button
+                  type="button"
+                  className="panel-text-button"
+                  onClick={loadUserForms}
+                >
+                  Try again
+                </button>
+              </div>
+            )}
+
+            {templateStatus === "error" && (
               <p className="dashboard-inline-error" role="alert">
-                Couldn't load server templates. Check that the backend is running.
+                Couldn't load server templates.
               </p>
             )}
 
-            {serverStatus === "loading" && savedForms.length === 0 ? (
+            {(formStatus === "loading" || templateStatus === "loading") &&
+            allForms.length === 0 ? (
               <div className="dashboard-empty-message">
                 Loading your forms...
               </div>
@@ -456,7 +515,7 @@ function Dashboard() {
                 {filteredForms.slice(0, 5).map((form) => (
                   <article
                     className="dashboard-form-row"
-                    key={`${form.isServerForm ? "server" : "local"}-${form.id}`}
+                    key={`${form.isCloudForm ? "cloud" : "template"}-${form.id}`}
                   >
                     <div className="dashboard-form-icon">
                       <DashboardIcon name="document" size={19} />
@@ -476,7 +535,7 @@ function Dashboard() {
                     </div>
 
                     <div className="dashboard-form-actions">
-                      {form.isSavedForm && (
+                      {form.isCloudForm && (
                         <button
                           type="button"
                           className="form-row-secondary"
@@ -497,7 +556,7 @@ function Dashboard() {
                   </article>
                 ))}
               </div>
-            ) : (
+            ) : formStatus === "ready" && templateStatus === "ready" ? (
               <div className="dashboard-empty-message">
                 <DashboardIcon name="search" size={25} />
                 <h3>No forms found</h3>
@@ -514,7 +573,7 @@ function Dashboard() {
                   Create Form
                 </button>
               </div>
-            )}
+            ) : null}
 
             {filteredForms.length > 5 && (
               <button
@@ -586,7 +645,10 @@ function Dashboard() {
                       <div className="recent-activity-info">
                         <h3>{config.title}</h3>
                         <p>{activity.formTitle || "Untitled Form"}</p>
-                        <span>{formatTimestamp(activity.createdAt)?.date || "Time unavailable"}</span>
+                        <span>
+                          {formatTimestamp(activity.createdAt)?.date ||
+                            "Time unavailable"}
+                        </span>
                       </div>
                     </article>
                   );
@@ -601,7 +663,7 @@ function Dashboard() {
             <div>
               <p className="section-eyebrow">SUBMISSION INSIGHTS</p>
               <h2>Response Overview</h2>
-              <p>A snapshot of responses saved in this browser.</p>
+              <p>A snapshot of submissions stored in your account.</p>
             </div>
 
             <button
@@ -614,31 +676,53 @@ function Dashboard() {
             </button>
           </div>
 
-          <div className="response-overview-grid">
-            <div className="response-overview-item">
-              <span>Total Submissions</span>
-              <strong>{responseOverview.total}</strong>
+          {responseStatus === "error" ? (
+            <div className="dashboard-empty-message">
+              <p>Couldn't load your cloud submissions.</p>
+              <button
+                type="button"
+                className="panel-text-button"
+                onClick={loadResponses}
+              >
+                Try again
+              </button>
             </div>
-
-            <div className="response-overview-item">
-              <span>Forms With Responses</span>
-              <strong>{responseOverview.formsWithResponses}</strong>
-            </div>
-
-            <div className="response-overview-item">
-              <span>Latest Submission</span>
-              {responseOverview.latestResponse ? (
-                <div className="response-latest">
-                  <strong>{responseOverview.latestResponse.date}</strong>
-                  <span>{responseOverview.latestResponse.time}</span>
-                </div>
-              ) : (
-                <strong className="response-latest-empty">
-                  No submissions yet
+          ) : (
+            <div className="response-overview-grid">
+              <div className="response-overview-item">
+                <span>Total Submissions</span>
+                <strong>
+                  {responseStatus === "ready" ? responseOverview.total : "—"}
                 </strong>
-              )}
+              </div>
+
+              <div className="response-overview-item">
+                <span>Forms With Responses</span>
+                <strong>
+                  {responseStatus === "ready"
+                    ? responseOverview.formsWithResponses
+                    : "—"}
+                </strong>
+              </div>
+
+              <div className="response-overview-item">
+                <span>Latest Submission</span>
+                {responseStatus === "ready" &&
+                responseOverview.latestResponse ? (
+                  <div className="response-latest">
+                    <strong>{responseOverview.latestResponse.date}</strong>
+                    <span>{responseOverview.latestResponse.time}</span>
+                  </div>
+                ) : (
+                  <strong className="response-latest-empty">
+                    {responseStatus === "ready"
+                      ? "No submissions yet"
+                      : "Loading..."}
+                  </strong>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </section>
       </main>
     </div>

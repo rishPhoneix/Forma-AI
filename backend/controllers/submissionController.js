@@ -3,35 +3,68 @@ const UserForm = require("../models/UserForm");
 const Submission = require("../models/Submission");
 const Activity = require("../models/Activity");
 const { isConditionMet } = require("../utils/showIf");
+const { parsePhoneNumberFromString } = require("libphonenumber-js");
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 function isRealDate(value) {
   if (typeof value !== "string" || !DATE_RE.test(value)) return false;
+
   const date = new Date(`${value}T00:00:00Z`);
-  return !Number.isNaN(date.getTime()) &&
-    date.toISOString().slice(0, 10) === value;
+
+  return (
+    !Number.isNaN(date.getTime()) &&
+    date.toISOString().slice(0, 10) === value
+  );
+}
+
+function isValidPhone(value) {
+  if (typeof value !== "string" || !value.startsWith("+")) {
+    return false;
+  }
+
+  try {
+    const phoneNumber = parsePhoneNumberFromString(value);
+
+    return Boolean(
+      phoneNumber &&
+      phoneNumber.isValid() &&
+      phoneNumber.number === value
+    );
+  } catch {
+    return false;
+  }
 }
 
 function isValidValue(field, value) {
   switch (field.type) {
     case "text":
     case "textarea":
-      return typeof value === "string" &&
+      return (
+        typeof value === "string" &&
         value.trim().length > 0 &&
-        (!field.pattern || new RegExp(field.pattern).test(value));
+        (!field.pattern || new RegExp(field.pattern).test(value))
+      );
+
     case "email":
       return typeof value === "string" && EMAIL_RE.test(value);
+
     case "number":
       return typeof value === "number" && Number.isFinite(value);
+
+    case "phone":
+      return isValidPhone(value);
+
     case "dropdown":
-      return typeof value === "string" &&
-        field.options.includes(value);
+      return typeof value === "string" && field.options.includes(value);
+
     case "date":
       return isRealDate(value);
+
     case "checkbox":
       return typeof value === "boolean";
+
     default:
       return false;
   }

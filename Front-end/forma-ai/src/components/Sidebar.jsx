@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 
@@ -36,6 +35,12 @@ function Icon({ name, size = 19 }) {
         <path d="M12 8v8M8 12h8" />
       </>
     ),
+    magic: (
+      <>
+        <path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3Z" />
+        <path d="m19 14 1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14Z" />
+      </>
+    ),
     templates: (
       <>
         <rect x="3" y="3" width="8" height="8" rx="1.5" />
@@ -68,6 +73,7 @@ function Sidebar() {
   const isDashboard = location.pathname === "/dashboard";
   const isMyForms = location.pathname === "/my-forms";
   const isCreateForm = location.pathname === "/create-form";
+  const isBuildByMagic = location.pathname.startsWith("/build-by-magic");
   const isTemplates = location.pathname === "/templates";
   const isResponses = location.pathname === "/responses";
   const isActivityHistory = location.pathname === "/activity-history";
@@ -110,6 +116,15 @@ function Sidebar() {
             >
               <Icon name="create" />
               <span>Create Form</span>
+            </Link>
+
+            <Link
+              to="/build-by-magic"
+              className={`nav-link ${isBuildByMagic ? "active" : ""}`}
+            >
+              <Icon name="magic" />
+              <span>Build by Magic</span>
+              <span className="nav-link-badge">AI</span>
             </Link>
 
             <Link

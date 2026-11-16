@@ -4,6 +4,7 @@ const FIELD_TYPES = [
   "text",
   "email",
   "number",
+  "phone",
   "dropdown",
   "date",
   "textarea",
@@ -26,6 +27,33 @@ const userFormFieldSchema = new mongoose.Schema(
     showIf: { type: mongoose.Schema.Types.Mixed, default: null },
   },
   { _id: false, id: false }
+);
+
+const versionSnapshotSchema = new mongoose.Schema(
+  {
+    version: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      default: "",
+    },
+    fields: {
+      type: [userFormFieldSchema],
+      default: [],
+    },
+    savedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false }
 );
 
 const userFormSchema = new mongoose.Schema(
@@ -61,6 +89,10 @@ const userFormSchema = new mongoose.Schema(
       type: Number,
       default: 1,
       min: 1,
+    },
+    versionHistory: {
+      type: [versionSnapshotSchema],
+      default: [],
     },
     publishedAt: {
       type: Date,

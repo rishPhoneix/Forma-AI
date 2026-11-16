@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import PhoneInput from "../components/PhoneInput";
 import "./FormBuilder.css";
+import {
+  createUserForm,
+  fetchUserForm,
+  updateUserForm,
+} from "../utils/userFormsApi";
 
 const STORAGE_KEY = "forma-ai-saved-forms";
 const ACTIVITY_KEY = "forma-ai-activity-history";
@@ -25,9 +31,13 @@ function logActivity(action, formId, formTitle) {
 
 function FormBuilder() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const editId = searchParams.get("edit");
-
+  const source = searchParams.get("source");
+  const isCloudEdit = source === "cloud";
+  const [cloudFormId, setCloudFormId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [formTitle, setFormTitle] = useState("Untitled Form");
   const [description, setDescription] = useState("");
   const [fields, setFields] = useState([]);
@@ -36,14 +46,47 @@ function FormBuilder() {
 
   useEffect(() => {
     if (!editId) return;
+    let cancelled = false;
 
-    try {
-      const savedForms = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      const existingForm = savedForms.find(
-        (form) => String(form.id) === String(editId)
-      );
+    async function loadForm() {
+      setIsLoading(true);
+      setSaveMessage("");
 
-      if (existingForm) {
+      try {
+        if (isCloudEdit) {
+          const existingForm = await fetchUserForm(editId);
+          if (cancelled) return;
+
+          setCloudFormId(String(existingForm._id));
+          setFormTitle(existingForm.title || "Untitled Form");
+          setDescription(existingForm.description || "");
+          setFields(
+            Array.isArray(existingForm.fields)
+              ? existingForm.fields.map((field) => ({
+                  ...field,
+                  type: toBuilderFieldType(field.type),
+                  options:
+                    field.type === "dropdown"
+                      ? Array.isArray(field.options) && field.options.length
+                        ? field.options
+                        : [""]
+                      : field.options || [],
+                }))
+              : []
+          );
+          return;
+        }
+
+        const savedForms = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        const existingForm = Array.isArray(savedForms)
+          ? savedForms.find((form) => String(form.id) === String(editId))
+          : null;
+
+        if (!existingForm) {
+          setSaveMessage("Saved form not found.");
+          return;
+        }
+
         setFormTitle(existingForm.title || "Untitled Form");
         setDescription(existingForm.description || "");
         setFields(
@@ -59,14 +102,25 @@ function FormBuilder() {
               }))
             : []
         );
-      } else {
-        setSaveMessage("Saved form not found.");
+      } catch (error) {
+        console.error("Unable to load form:", error);
+        if (!cancelled) {
+          setSaveMessage(
+            isCloudEdit
+              ? error.message || "Unable to load this cloud form."
+              : "Unable to load this saved form."
+          );
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Unable to load saved form:", error);
-      setSaveMessage("Unable to load this form.");
     }
-  }, [editId]);
+
+    loadForm();
+    return () => {
+      cancelled = true;
+    };
+  }, [editId, isCloudEdit]);
 
   const addField = (type) => {
     const newField = {
@@ -225,8 +279,8 @@ function FormBuilder() {
       setSaveMessage("Unable to generate PDF. Please try again.");
     }
   };
-
-  const downloadSubmittedPDF = async (answers) => {
+  
+    const downloadSubmittedPDF = async (answers) => {
     const { default: jsPDF } = await import("jspdf");
     const doc = new jsPDF("p", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -364,7 +418,7 @@ function FormBuilder() {
     );
   };
 
-  const saveForm = () => {
+  const saveForm = async () => {
     const cleanTitle = formTitle.trim();
 
     if (!cleanTitle || cleanTitle === "Untitled Form") {
@@ -390,9 +444,65 @@ function FormBuilder() {
       return;
     }
 
-    try {
-      const savedForms = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    const cleanedFields = fields.map((field) => ({
+      ...field,
+      options:
+        field.type === "Dropdown"
+          ? (field.options || [])
+              .map((option) => String(option).trim())
+              .filter(Boolean)
+          : field.options || [],
+    }));
 
+    setIsSaving(true);
+    setSaveMessage("");
+
+    try {
+      const cloudFields = cleanedFields.map((field) => ({
+        id: String(field.id),
+        type: toApiFieldType(field.type),
+        label: String(field.label || "").trim(),
+        placeholder: String(field.placeholder || ""),
+        required: Boolean(field.required),
+        options: field.type === "Dropdown" ? field.options : [],
+        ...(field.pattern ? { pattern: field.pattern } : {}),
+        ...(field.showIf ? { showIf: field.showIf } : {}),
+      }));
+
+      if (isCloudEdit || cloudFormId) {
+        const formId = cloudFormId || editId;
+        const savedForm = await updateUserForm(formId, {
+          title: cleanTitle,
+          description: description.trim(),
+          fields: cloudFields,
+        });
+
+        setCloudFormId(String(savedForm._id));
+        setFields(cleanedFields);
+        setSaveMessage("Cloud form updated successfully!");
+        setSubmitMessage("");
+        return;
+      }
+
+      if (!editId) {
+        const savedForm = await createUserForm({
+          title: cleanTitle,
+          description: description.trim(),
+          fields: cloudFields,
+        });
+
+        setCloudFormId(String(savedForm._id));
+        setSearchParams(
+          { edit: String(savedForm._id), source: "cloud" },
+          { replace: true }
+        );
+        setFields(cleanedFields);
+        setSaveMessage("Form saved to Forma AI successfully!");
+        setSubmitMessage("");
+        return;
+      }
+
+      const savedForms = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
       if (!Array.isArray(savedForms)) {
         throw new Error("Saved forms data is invalid.");
       }
@@ -408,16 +518,6 @@ function FormBuilder() {
         return;
       }
 
-      const cleanedFields = fields.map((field) => ({
-        ...field,
-        options:
-          field.type === "Dropdown"
-            ? (field.options || [])
-                .map((option) => String(option).trim())
-                .filter(Boolean)
-            : field.options || [],
-      }));
-
       let savedForm;
       let action;
 
@@ -429,7 +529,6 @@ function FormBuilder() {
           fields: cleanedFields,
           updatedAt: new Date().toISOString(),
         };
-
         savedForms[existingIndex] = savedForm;
         action = "Form Edited";
       } else {
@@ -441,7 +540,6 @@ function FormBuilder() {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
-
         savedForms.push(savedForm);
         action = "Form Created";
       }
@@ -455,7 +553,9 @@ function FormBuilder() {
       setSubmitMessage("");
     } catch (error) {
       console.error("Unable to save form:", error);
-      setSaveMessage("Unable to save the form. Please try again.");
+      setSaveMessage(error.message || "Unable to save the form. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -468,11 +568,18 @@ function FormBuilder() {
     }
 
     const formData = new FormData(event.currentTarget);
-    const submittedAnswers = fields.map((field) => ({
-      label: field.label?.trim() || field.type || "Untitled Field",
-      type: field.type,
-      value: String(formData.get(`field-${field.id}`) ?? "").trim(),
-    }));
+    const submittedAnswers = fields.map((field) => {
+      const fieldName = `field-${field.id}`;
+      const value = field.type === "Phone"
+        ? formData.get(`${fieldName}-international`)
+        : formData.get(fieldName);
+
+      return {
+        label: field.label?.trim() || field.type || "Untitled Field",
+        type: field.type,
+        value: String(value ?? "").trim(),
+      };
+    });
 
     try {
       await downloadSubmittedPDF(submittedAnswers);
@@ -509,10 +616,21 @@ function FormBuilder() {
         return <input type="email" {...commonProps} />;
       case "Number":
         return <input type="number" {...commonProps} />;
+      case "Phone":
+        return <PhoneInput {...commonProps} />;
       case "Date":
         return <input type="date" {...commonProps} />;
       case "Textarea":
         return <textarea {...commonProps} rows={4} />;
+      case "Checkbox":
+        return (
+          <input
+            id={commonProps.id}
+            name={commonProps.name}
+            type="checkbox"
+            required={commonProps.required}
+          />
+        );
       case "Dropdown":
         return (
           <select {...commonProps} defaultValue="">
@@ -531,7 +649,7 @@ function FormBuilder() {
     }
   };
 
-  return (
+    return (
     <div className="builder-layout">
       <Sidebar />
       <main className="builder-main">
@@ -541,7 +659,11 @@ function FormBuilder() {
             <div>
               <p className="builder-eyebrow">FORM WORKSPACE</p>
               <h1>
-                {editId ? "Edit Saved Form" : "Dynamic Form Builder"}
+                {editId
+                  ? isCloudEdit
+                    ? "Edit Cloud Form"
+                    : "Edit Saved Form"
+                  : "Dynamic Form Builder"}
               </h1>
               <p>
                 Create, customize, preview, and download professional forms.
@@ -587,9 +709,11 @@ function FormBuilder() {
                   "Text",
                   "Email",
                   "Number",
+                  "Phone",
                   "Dropdown",
                   "Date",
                   "Textarea",
+                  "Checkbox",
                 ].map((type) => (
                   <button
                     type="button"
@@ -741,8 +865,15 @@ function FormBuilder() {
                 type="button"
                 className="preview-submit"
                 onClick={saveForm}
+                disabled={isSaving || isLoading}
               >
-                {editId ? "Update Form" : "Save Form"}
+                {isLoading
+                  ? "Loading Form..."
+                  : isSaving
+                    ? "Saving..."
+                    : isCloudEdit || cloudFormId || editId
+                      ? "Update Form"
+                      : "Save to Forma AI"}
               </button>
 
               {saveMessage && (
@@ -822,6 +953,24 @@ function FormBuilder() {
       </main>
     </div>
   );
+}
+
+function toBuilderFieldType(type) {
+  const types = {
+    text: "Text",
+    email: "Email",
+    number: "Number",
+    phone: "Phone",
+    dropdown: "Dropdown",
+    date: "Date",
+    textarea: "Textarea",
+    checkbox: "Checkbox",
+  };
+  return types[String(type || "").toLowerCase()] || "Text";
+}
+
+function toApiFieldType(type) {
+  return String(type || "text").toLowerCase();
 }
 
 function makeSafeFilename(title) {

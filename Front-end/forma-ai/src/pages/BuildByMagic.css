@@ -1,0 +1,595 @@
+.magic-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.magic-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.magic-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.magic-heading,
+.magic-panel-heading,
+.magic-preview-heading,
+.magic-section-heading,
+.magic-prompt-footer,
+.magic-field-editor-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.magic-heading {
+  margin-bottom: 28px;
+}
+
+.magic-heading h1 {
+  margin: 4px 0 8px;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 750;
+  letter-spacing: -1.2px;
+}
+
+.magic-heading > div > p:last-child,
+.magic-section-heading p,
+.magic-prompt-footer span {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.magic-eyebrow {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.7px;
+  margin: 0 0 6px;
+}
+
+.magic-back-button,
+.magic-field-types button,
+.magic-preview-switch button {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-h);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.magic-prompt-panel,
+.magic-editor-panel,
+.magic-preview-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.035);
+}
+
+.magic-prompt-panel {
+  margin-bottom: 20px;
+}
+
+.magic-section-heading {
+  justify-content: flex-start;
+  margin-bottom: 18px;
+}
+
+.magic-section-heading h2,
+.magic-panel-heading h2,
+.magic-preview-heading h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.magic-section-heading p {
+  margin: 5px 0 0;
+}
+
+.magic-sparkle {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 23px;
+}
+
+.magic-prompt-input,
+.magic-label input,
+.magic-label textarea,
+.magic-label select,
+.magic-option-row input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  border-radius: 10px;
+  padding: 12px;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.magic-prompt-input {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.magic-prompt-input:focus,
+.magic-label input:focus,
+.magic-label textarea:focus,
+.magic-label select:focus,
+.magic-option-row input:focus {
+  border-color: var(--accent);
+}
+
+.magic-prompt-footer {
+  margin-top: 14px;
+}
+
+.magic-primary-button {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 19px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.magic-primary-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.magic-primary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.magic-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.magic-editor-panel,
+.magic-preview-panel {
+  min-width: 0;
+}
+
+.magic-panel-heading {
+  margin-bottom: 22px;
+}
+
+.magic-field-count {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.magic-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: var(--text-h);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.magic-label textarea {
+  resize: vertical;
+}
+
+.magic-add-heading h3,
+.magic-fields-title {
+  font-size: 13px;
+  margin: 22px 0 12px;
+}
+
+.magic-field-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.magic-field-types button {
+  padding: 8px 11px;
+  font-size: 11px;
+}
+
+.magic-field-types button:hover,
+.magic-back-button:hover {
+  border-color: var(--accent);
+}
+
+.magic-field-editor {
+  padding: 17px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--bg);
+}
+
+.magic-field-editor-heading {
+  margin-bottom: 16px;
+}
+
+.magic-field-editor-heading strong {
+  font-size: 12px;
+}
+
+.magic-remove-button {
+  border: 0;
+  background: transparent;
+  color: #d45c5c;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.magic-required-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.magic-required-toggle input {
+  accent-color: var(--accent);
+}
+
+.magic-option-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.magic-option-row button,
+.magic-add-option {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-h);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 8px 11px;
+}
+
+.magic-add-option {
+  font-size: 11px;
+}
+
+.magic-save-button {
+  width: 100%;
+  margin-top: 22px;
+}
+
+.magic-preview-heading {
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.magic-preview-switch {
+  display: flex;
+  gap: 5px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.magic-preview-switch button {
+  border: none;
+  padding: 7px 10px;
+  font-size: 10px;
+}
+
+.magic-preview-switch button.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.magic-preview-frame {
+  min-height: 500px;
+  padding: 20px;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+  margin: 0 auto;
+  transition: max-width 0.2s;
+}
+
+.magic-preview-frame.desktop {
+  max-width: 100%;
+}
+
+.magic-preview-frame.mobile {
+  max-width: 360px;
+}
+
+.magic-preview-form {
+  max-width: 560px;
+  margin: 15px auto;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.magic-preview-form h2 {
+  font-size: 19px;
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.magic-preview-form > p {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.magic-preview-field {
+  margin-bottom: 18px;
+}
+
+.magic-preview-field > label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.magic-preview-field input:not([type="checkbox"]),
+.magic-preview-field textarea,
+.magic-preview-field select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.magic-preview-checkbox {
+  display: flex;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.magic-required-star {
+  color: #d45c5c;
+}
+
+.magic-preview-form > button {
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.magic-preview-brand {
+  display: block;
+  text-align: center;
+  margin-top: 22px;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.magic-feedback {
+  padding: 12px 15px;
+  border-radius: 9px;
+  font-size: 12px;
+  margin: 12px 0;
+}
+
+.magic-error {
+  color: #d45c5c;
+  background: rgba(212, 92, 92, 0.08);
+}
+
+.magic-success {
+  color: #3a9b72;
+  background: rgba(58, 155, 114, 0.08);
+}
+
+.magic-empty-state {
+  padding: 28px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* =========================================
+   BUILD BY MAGIC - PROMPT ENHANCEMENT
+========================================= */
+
+.magic-prompt-actions,
+.magic-enhanced-footer > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.magic-enhance-button {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  background: var(--surface);
+  color: var(--text-h);
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.magic-enhance-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.magic-enhance-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.magic-enhanced-panel {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--bg);
+}
+
+.magic-enhanced-heading,
+.magic-enhanced-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.magic-enhanced-heading strong {
+  font-size: 13px;
+}
+
+.magic-enhanced-heading p {
+  margin: 5px 0 14px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.magic-enhanced-heading > span {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 20px;
+  padding: 6px 9px;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.8px;
+}
+
+.magic-enhanced-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 150px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-h);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+}
+
+.magic-enhanced-input:focus {
+  border-color: var(--accent);
+}
+
+.magic-enhanced-footer {
+  margin-top: 13px;
+}
+
+.magic-enhanced-footer > span {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 1100px) {
+  .magic-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .magic-preview-panel {
+    order: -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .magic-content {
+    padding: 18px 13px;
+  }
+
+  .magic-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .magic-prompt-panel,
+  .magic-editor-panel,
+  .magic-preview-panel {
+    padding: 16px;
+  }
+
+  .magic-prompt-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .magic-prompt-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .magic-prompt-actions button {
+    width: 100%;
+  }
+
+  .magic-enhanced-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .magic-enhanced-footer > div {
+    width: 100%;
+  }
+
+  .magic-enhanced-footer button {
+    flex: 1;
+  }
+
+  .magic-preview-heading {
+    flex-direction: column;
+  }
+
+  .magic-preview-frame {
+    padding: 10px;
+  }
+
+  .magic-preview-form {
+    padding: 16px;
+  }
+}

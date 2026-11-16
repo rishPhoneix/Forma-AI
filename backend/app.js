@@ -12,6 +12,7 @@ const activityRoutes = require("./routes/activityRoutes");
 const extractRoutes = require("./routes/extractRoutes");
 const conversationRoutes = require("./routes/conversationRoutes");
 const aiRoutes = require("./routes/aiRoutes");
+const buildByMagicRoutes = require("./routes/buildByMagicRoutes");
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/api/activities", activityRoutes);
 app.use("/api/extract", extractRoutes);
 app.use("/api/conversations", conversationRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/build-by-magic", buildByMagicRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
